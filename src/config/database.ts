@@ -1,5 +1,6 @@
 import { DataSource } from 'typeorm';
 import { EnvConfig } from '../infraestructure/env/EnvConfig'; // Importar para obtener variables de entorno
+import { UserEntity } from '../infraestructure/database/entities/UserEntity';
 
 // Importa tus entidades de TypeORM aquí
 // import { UserEntity } from '../infrastructure/database/entities/UserEntity';
@@ -14,6 +15,7 @@ export const AppDataSource = new DataSource({
   synchronize: EnvConfig.get('NODE_ENV') === 'development', // ¡NO USAR EN PRODUCCIÓN! Solo para desarrollo para crear tablas automáticamente
   logging: EnvConfig.get('NODE_ENV') === 'development', // Habilita logging SQL en desarrollo
   entities: [
+    UserEntity,
     // UserEntity // Añade tus entidades aquí
   ],
   migrations: [], // Aquí irán tus archivos de migración
