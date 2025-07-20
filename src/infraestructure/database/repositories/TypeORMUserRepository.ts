@@ -1,9 +1,18 @@
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { User } from '../../../domain/models/User';
 import { UserRepository } from '../../../domain/repositories/UserRepository';
 import { AppDataSource } from '../../../config/database';
 import { UserEntity } from '../entities/UserEntity';
 const bcrypt = require('bcrypt');
+
+interface UserUpdateFields {
+  identification?: string;
+  name?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
+  city?: string;
+}
 
 export class TypeORMCustomerRepository implements UserRepository {
   private ormRepository: Repository<UserEntity>;
@@ -29,11 +38,12 @@ export class TypeORMCustomerRepository implements UserRepository {
       savedEntity.lastName,
       savedEntity.email,
       savedEntity.password,
-      savedEntity.city
+      savedEntity.city,
+      savedEntity.id
     );
   }
 
-  async findById(id: number): Promise<User | null> {
+  async findById(id: string): Promise<User | null> {
     const userEntity = await this.ormRepository.findOne({
       where: { id },
     });
@@ -46,7 +56,8 @@ export class TypeORMCustomerRepository implements UserRepository {
       userEntity.lastName,
       userEntity.email,
       userEntity.password,
-      userEntity.city
+      userEntity.city,
+      userEntity.id
     );
   }
 
@@ -63,7 +74,8 @@ export class TypeORMCustomerRepository implements UserRepository {
       userEntity.lastName,
       userEntity.email,
       userEntity.password,
-      userEntity.city
+      userEntity.city,
+      userEntity.id
     );
   }
 
@@ -78,38 +90,63 @@ export class TypeORMCustomerRepository implements UserRepository {
       userEntity.lastName,
       userEntity.email,
       userEntity.password,
-      userEntity.city
+      userEntity.city,
+      userEntity.id
     );
   }
 
-  // async update(
-  //   id: number,
-  //   name: string,
-  //   lastName: string,
-  //   email: string,
-  //   password: string,
-  //   city: string
-  // ): Promise<User | null> {
-  //   const existUser = await this.ormRepository.findOne({ where: { id } });
-  //   if (!existUser) {
-  //     return null;
-  //   }
-  //   const userEntity = await this.ormRepository.update(id, {
-  //     name: name,
-  //     lastName: lastName,
-  //     email: email,
-  //     password: password,
-  //     city: city,
-  //   });
-  //   return new User(
-  //     userEntity.identification,
-  //     userEntity.name,
-  //     userEntity.lastName,
-  //     userEntity.email,
-  //     userEntity.password,
-  //     userEntity.city
-  //   );
-  // }
+  async update(id: string, updates: UserUpdateFields): Promise<User | null> {
+    if (updates.password) {
+      updates.password = await bcrypt.hash(updates.password, 10);
+    }
+    const updateResult: UpdateResult = await this.ormRepository.update(
+      id,
+      updates
+    );
 
-  // delete(id: string): Promise<User> {}
+    if (updateResult.affected === 0) {
+      return null;
+    }
+
+    const updateUserEntity = await this.ormRepository.findOne({
+      where: { id },
+    });
+
+    if (!updateUserEntity) {
+      return null;
+    }
+
+    return new User(
+      updateUserEntity.identification,
+      updateUserEntity.name,
+      updateUserEntity.lastName,
+      updateUserEntity.email,
+      updateUserEntity.password,
+      updateUserEntity.city,
+      updateUserEntity.id
+    );
+  }
+
+  async delete(id: string): Promise<User | null> {
+    const userEntity = await this.ormRepository.findOne({ where: { id } });
+    if (!userEntity) {
+      return null;
+    }
+    const deleteUser = await this.ormRepository.delete(id);
+
+    if (deleteUser.affected === 0) {
+      console.log(
+        `Error: No se pudo eliminar el usuario con ID ${id} a pesar de haberlo encontrado.`
+      );
+    }
+    return new User(
+      userEntity.identification,
+      userEntity.name,
+      userEntity.lastName,
+      userEntity.email,
+      userEntity.password,
+      userEntity.city,
+      userEntity.id
+    );
+  }
 }

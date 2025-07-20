@@ -5,7 +5,8 @@ export class UserService {
   userRepository: any;
   constructor(userRepository: UserRepository) {}
 
-  async registerUser(
+  async saveUser(
+    id: string,
     identification: string,
     name: string,
     lastName: string,
@@ -26,6 +27,7 @@ export class UserService {
     }
 
     const saveUser = new User(
+      id,
       identification,
       name,
       lastName,

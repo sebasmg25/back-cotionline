@@ -1,17 +1,18 @@
 import { User } from '../models/User';
 
+interface UserUpdateFields {
+  identification?: string;
+  name?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
+  city?: string;
+}
 export interface UserRepository {
   save(user: User): Promise<User>;
-  findById(id: number): Promise<User | null>;
+  findById(id: string): Promise<User | null>;
   findByIdentification(identification: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
-  // update(
-  //   id: number,
-  //   name: string,
-  //   lastName: string,
-  //   email: string,
-  //   password: string,
-  //   city: string
-  // ): Promise<User | null>;
-  // delete(id: string): Promise<User>;
+  update(id: string, updates: UserUpdateFields): Promise<User | null>;
+  delete(id: string): Promise<User | null>;
 }

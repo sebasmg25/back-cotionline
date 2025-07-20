@@ -5,6 +5,7 @@ export class User {
   public email: string;
   public password: string;
   public city: string;
+  public id?: string;
 
   constructor(
     identification: string,
@@ -12,7 +13,8 @@ export class User {
     lastName: string,
     email: string,
     password: string,
-    city: string
+    city: string,
+    id?: string
   ) {
     this.identification = identification;
     this.name = name;
@@ -20,6 +22,7 @@ export class User {
     this.email = email;
     this.password = password;
     this.city = city;
+    this.id = id;
   }
 
   // register() {}

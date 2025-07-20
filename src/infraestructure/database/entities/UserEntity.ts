@@ -4,7 +4,7 @@ import { User } from '../../../domain/models/User';
 @Entity('users')
 export class UserEntity extends User {
   @PrimaryGeneratedColumn('uuid')
-  id!: number;
+  id!: string;
 
   @Column({ unique: true })
   identification!: string;
