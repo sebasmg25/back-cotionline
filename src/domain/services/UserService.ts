@@ -2,11 +2,11 @@ import { User } from '../models/User';
 import { UserRepository } from '../repositories/UserRepository';
 
 export class UserService {
-  userRepository: any;
-  constructor(userRepository: UserRepository) {}
+  constructor(private userRepository: UserRepository) {
+    this.userRepository = userRepository;
+  }
 
   async saveUser(
-    id: string,
     identification: string,
     name: string,
     lastName: string,
@@ -14,7 +14,9 @@ export class UserService {
     password: string,
     city: string
   ) {
-    const existId = await this.userRepository.findById(identification);
+    const existId = await this.userRepository.findByIdentification(
+      identification
+    );
     const existEmail = await this.userRepository.findByEmail(email);
     if (existId) {
       throw new Error(
@@ -27,7 +29,6 @@ export class UserService {
     }
 
     const saveUser = new User(
-      id,
       identification,
       name,
       lastName,

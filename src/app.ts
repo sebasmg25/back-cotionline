@@ -1,4 +1,7 @@
 import express, { Application } from 'express';
+import { userRoutes } from './infraestructure/api/routes/UserRoutes';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 // Aquí importarías tus rutas
 // import { userRoutes } from './infrastructure/api/routes/userRoutes';
 
@@ -12,7 +15,9 @@ export class App {
   }
 
   private setupMiddlewares(): void {
-    this.app.use(express.json()); // Habilitar el parsing de JSON en las peticiones
+    this.app.use(express.json());
+    this.app.use(cors());
+    this.app.use(bodyParser.json()); // Habilitar el parsing de JSON en las peticiones
     // Otros middlewares como CORS, morgan para logging, etc.
   }
 
@@ -23,6 +28,8 @@ export class App {
         '¡Bienvenido a mi API Backend con TypeScript, Express y TypeORM!'
       );
     });
+
+    this.app.use('/users', userRoutes);
 
     // this.app.use('/users', userRoutes); // Descomenta cuando crees tus rutas de usuario
   }

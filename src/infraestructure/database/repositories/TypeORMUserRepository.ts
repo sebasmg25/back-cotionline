@@ -14,7 +14,7 @@ interface UserUpdateFields {
   city?: string;
 }
 
-export class TypeORMCustomerRepository implements UserRepository {
+export class TypeORMUserRepository implements UserRepository {
   private ormRepository: Repository<UserEntity>;
 
   constructor() {
