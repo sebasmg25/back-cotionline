@@ -1,8 +1,15 @@
 import { User } from '../models/User';
 import { UserRepository } from '../repositories/UserRepository';
 
+export interface TokenGenerator {
+  generateToken(payload: object): string;
+}
+
+
 export class UserService {
-  constructor(private userRepository: UserRepository) {
+  constructor(private userRepository: UserRepository,
+    private tokenGenerator: TokenGenerator
+  ) {
     this.userRepository = userRepository;
   }
 
@@ -38,5 +45,31 @@ export class UserService {
     );
     const savedUser = await this.userRepository.save(saveUser);
     return savedUser;
+  }
+
+  async login(email: string, passwordPlain: string): Promise<{user: User; token: string}>{
+    const user = await this.userRepository.findByEmail(email);
+
+    if(!user){
+      throw new Error('Tus credenciales son inválidas. Por favor verifica tu usuario y/o contraseña');
+    }
+
+    const isPaswordValid = await( await import('bcrypt')).compare(passwordPlain, user.password);
+
+    if(!isPaswordValid){
+      throw new Error('Tus credenciales son inválidas. Por favor verifica tu usuario y/o contraseña');
+    }
+
+    const token = this.tokenGenerator.generateToken({
+      id : user.id,
+      identification : user.identification,
+      lastName : user.lastName,
+      email : user.email,
+      name : user.name,
+      city: user.city
+    });
+
+    const {password, ...userWithouthPassword} = user;
+    return{user: userWithouthPassword as User, token};
   }
 }
