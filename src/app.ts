@@ -1,5 +1,5 @@
 import express, { Application } from 'express';
-import { userRoutes } from './infraestructure/api/routes/UserRoutes';
+import { userRoutes } from './apps/api/routes/user/userRoutes';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 // Aquí importarías tus rutas

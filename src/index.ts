@@ -1,8 +1,8 @@
 import 'reflect-metadata'; // Importante para TypeORM
 import dotenv from 'dotenv';
 import { App } from './app';
-import { AppDataSource } from './config/database'; // Importar la configuración de la DB
-import { EnvConfig } from './infraestructure/env/EnvConfig'; // Importar la configuración de entorno
+import { AppDataSource } from './contexts/shared/infraestructure/config/database'; // Importar la configuración de la DB
+import { EnvConfig } from './contexts/shared/infraestructure/env/envConfig'; // Importar la configuración de entorno
 
 dotenv.config(); // Cargar variables de entorno
 
