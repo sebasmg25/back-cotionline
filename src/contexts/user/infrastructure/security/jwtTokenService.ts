@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { TokenGenerator } from '../../useCases/loginUser.useCase';
+import { TokenGenerator } from '../../domain/ports/tokenGenerator.port'
 import { EnvConfig } from '../../../shared/infraestructure/env/envConfig';
 
 export class JwtTokenService implements TokenGenerator {

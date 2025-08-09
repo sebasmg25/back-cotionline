@@ -1,52 +1,35 @@
 import { Request, Response } from 'express';
+import {validationResult} from 'express-validator'
 import { LoginUserUseCase } from '../../../../../contexts/user/useCases/loginUser.useCase';
 import { TypeORMUserRepository } from '../../../../../contexts/user/infrastructure/persistance/typeorm/typeOrmUserRepository';
 import { JwtTokenService } from '../../../../../contexts/user/infrastructure/security/jwtTokenService';
 
-import { LoginRequestDto } from '../../../../../contexts/user/interfaces/dtos/loginRequest.dto';
-import { UserResponseDto } from '../../../../../contexts/user/interfaces/dtos/userResponse.dto';
-import { LoginResponseDto } from '../../../../../contexts/user/interfaces/dtos/loginResponse.dto';
+import { UserRepository } from '../../../../../contexts/user/domain/repositories/user.repository';
 
 export class LoginUserController {
   private loginUserUseCase: LoginUserUseCase;
+
   constructor() {
-    const userRepository = new TypeORMUserRepository();
-    const tokenGenerator = new JwtTokenService();
+    const userRepository: UserRepository = new TypeORMUserRepository();
+    const tokenGenerator: JwtTokenService = new JwtTokenService();
     this.loginUserUseCase = new LoginUserUseCase(
       userRepository,
       tokenGenerator
     );
   }
 
-  async login(
-    req: Request<any, any, LoginRequestDto>,
-    res: Response
-  ): Promise<void> {
-    try {
-      const { email, password } = req.body;
-
-      if (!email || !password) {
-        res
-          .status(400)
-          .json({ message: 'Se requiere correo electrónico y contraseña.' });
+  async login(req: Request, res: Response): Promise<void> {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        res.status(400).json({errors : errors.array()});
         return;
-      }
+    }
+
+    try {
+      const {email, password} = req.body;
       const result = await this.loginUserUseCase.login(email, password);
 
-      const userResponse = new UserResponseDto(
-        result.user.id,
-        result.user.identification,
-        result.user.name,
-        result.user.lastName,
-        result.user.email,
-        result.user.city
-      );
-      const loginResponse = new LoginResponseDto(
-        'Inicio de sesión exitoso.',
-        userResponse,
-        result.token
-      );
-      res.status(200).json(loginResponse);
+      res.status(200).json(result);
     } catch (error: any) {
       if (
         error.message.includes('inválidas') ||
@@ -59,4 +42,4 @@ export class LoginUserController {
       }
     }
   }
-}
+}  

@@ -1,17 +1,13 @@
 import { User } from '../domain/models/user.model';
 import { UserRepository } from '../domain/repositories/user.repository';
+import {TokenGenerator} from '../domain/ports/tokenGenerator.port';
 
-export interface TokenGenerator {
-  generateToken(payload: object): string;
-}
 
 export class LoginUserUseCase {
   constructor(
     private userRepository: UserRepository,
     private tokenGenerator: TokenGenerator
-  ) {
-    this.userRepository = userRepository;
-  }
+  ) {}
 
   async login(
     email: string,
