@@ -4,6 +4,7 @@ import { LoginUserController } from '../../controllers/user/loginUser/loginUser.
 import { createUserValidationRules } from '../../controllers/user/createUser/createUser.validator';
 import { RequestValidator } from '../../middlewares/validateRequest';
 import { Request, Response, NextFunction } from 'express';
+import { loginUserValidationRules } from '../../controllers/user/loginUser/loginUser.validator';
 
 const router = Router();
 const userController = new CreateUserController();
@@ -16,6 +17,10 @@ router.post(
     RequestValidator.handle(req, res, next),
   userController.registerUser.bind(userController)
 );
-router.post('/login', loginController.login.bind(userController));
+router.post(
+  '/login',
+  loginUserValidationRules,
+  loginController.login.bind(userController)
+);
 
 export const userRoutes = router;
