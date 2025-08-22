@@ -15,10 +15,6 @@ export const updateUserValidationRules = [
     .notEmpty()
     .withMessage('El apellido no puede estar vacio.'),
 
-    body('email')
-    .optional()
-    .isEmail()
-    .withMessage('Formato de correo electrónico inválido.'),
 
     
 ];
