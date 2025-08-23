@@ -5,6 +5,8 @@ import { createUserValidationRules } from '../../controllers/user/createUser/cre
 import { loginUserValidationRules } from '../../controllers/user/loginUser/loginUser.validator';
 import { UpdateUserController } from '../../controllers/user/updateUser/updateUser.controller';
 import { updateUserValidationRules } from '../../controllers/user/updateUser/updateUser.validator';
+import { GetUserController } from '../../controllers/user/findUser/findUser.controller';
+import { DeleteUserController } from '../../controllers/user/deleteUser/deleteUser.controller';
 
 const router = Router();
 const userController = new CreateUserController();
@@ -23,5 +25,9 @@ router.put(
   updateUserValidationRules,
   new UpdateUserController().updateUser.bind(new UpdateUserController())
 );
+router.get(
+  '/users/:id', GetUserController
+);
+router.delete('users/:id', DeleteUserController);
 
 export const userRoutes = router;
