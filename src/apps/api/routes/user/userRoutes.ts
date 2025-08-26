@@ -26,14 +26,12 @@ router.post(
   loginUserValidationRules,
   loginController.login.bind(userController)
 );
-router.put(
+router.patch(
   '/:id',
   updateUserValidationRules,
   new UpdateUserController().updateUser.bind(new UpdateUserController())
 );
-router.get(
-  '/users/:id', GetUserController
-);
+router.get('/users/:id', GetUserController);
 router.delete('users/:id', DeleteUserController);
 
 export const userRoutes = router;
