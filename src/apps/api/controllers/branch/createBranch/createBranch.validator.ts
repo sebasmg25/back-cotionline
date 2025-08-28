@@ -8,7 +8,7 @@ export const createBranchValidationRules = [
      .withMessage('El nombre debe tener al menos 3 carácteres.'),
 
 
-    body('adress')
+    body('address')
      .notEmpty()
      .withMessage('La dirección es requerida'),
 

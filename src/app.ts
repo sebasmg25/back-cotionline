@@ -4,6 +4,7 @@ import { businessRoutes } from './apps/api/routes/business/businessRoutes';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { quotationRequestRoutes } from './apps/api/routes/quotationRequest/quotationRequestRoutes';
+import { branchRoutes } from './apps/api/routes/branchRoutes';
 // Aquí importarías tus rutas
 // import { userRoutes } from './infrastructure/api/routes/userRoutes';
 
@@ -32,8 +33,6 @@ export class App {
     });
 
     this.app.use('/users', userRoutes);
-    this.app.use('/business', businessRoutes);
-    this.app.use('/quotationRequests', quotationRequestRoutes);
 
     // this.app.use('/users', userRoutes); // Descomenta cuando crees tus rutas de usuario
   }

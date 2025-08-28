@@ -3,7 +3,7 @@ import { EnvConfig } from '../env/envConfig'; // Importar para obtener variables
 import { UserEntity } from '../../../user/infrastructure/persistance/typeorm/entities/user.entity';
 import { BusinessEntity } from '../../../business/infraestructure/persistance/typeorm/entities/business.entity';
 import { QuotationRequestEntity } from '../../../quotationRequest/infraestructure/persistance/typeorm/entities/quotationRequest.entity';
-
+import { BranchEntity } from '../../../branch/infrastructure/persistance/typeorm/entities/branch.entitiy';
 // Importa tus entidades de TypeORM aquí
 // import { UserEntity } from '../infrastructure/database/entities/UserEntity';
 
@@ -20,6 +20,7 @@ export const AppDataSource = new DataSource({
     UserEntity,
     BusinessEntity,
     QuotationRequestEntity,
+    BranchEntity,
     // UserEntity // Añade tus entidades aquí
   ],
   migrations: [], // Aquí irán tus archivos de migración
