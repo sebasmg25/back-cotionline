@@ -11,6 +11,21 @@ export class TypeORMBranchRepository implements BranchRepository{
     constructor(){
         this.ormRepository = AppDataSource.getRepository(BranchEntity);
     }
+    async findById(id: string): Promise<Branch | null> {
+        const branchEntity = await this.ormRepository.findOne({where: {id}});
+
+        if(!branchEntity){
+            return null;
+        }
+
+        return new Branch(
+            branchEntity.name,
+            branchEntity.address,
+            branchEntity.city,
+            branchEntity.business,
+            branchEntity.id
+        )
+    }
 
     async save(branch: Branch): Promise<Branch>{
         const branchEntity = this.ormRepository.create(branch);
@@ -29,5 +44,9 @@ export class TypeORMBranchRepository implements BranchRepository{
 
         return new Branch(branchEntity.name, branchEntity.address, branchEntity.city,
             branchEntity.business, branchEntity.id);
+    }
+
+    async delete(id: string): Promise<void>{
+        await this.ormRepository.delete(id);
     }
 }

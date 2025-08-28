@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import { userRoutes } from './apps/api/routes/userRoutes';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import { branchRoutes } from './apps/api/routes/branchRoutes';
 // Aquí importarías tus rutas
 // import { userRoutes } from './infrastructure/api/routes/userRoutes';
 
@@ -30,6 +31,7 @@ export class App {
     });
 
     this.app.use('/users', userRoutes);
+    this.app.use('/branches', branchRoutes);
 
     // this.app.use('/users', userRoutes); // Descomenta cuando crees tus rutas de usuario
   }
