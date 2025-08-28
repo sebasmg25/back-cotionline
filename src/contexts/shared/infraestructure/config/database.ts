@@ -1,6 +1,8 @@
 import { DataSource } from 'typeorm';
 import { EnvConfig } from '../env/envConfig'; // Importar para obtener variables de entorno
 import { UserEntity } from '../../../user/infrastructure/persistance/typeorm/entities/user.entity';
+import { BusinessEntity } from '../../../business/infraestructure/persistance/typeorm/entities/business.entity';
+import { QuotationRequestEntity } from '../../../quotationRequest/infraestructure/persistance/typeorm/entities/quotationRequest.entity';
 
 // Importa tus entidades de TypeORM aquí
 // import { UserEntity } from '../infrastructure/database/entities/UserEntity';
@@ -16,6 +18,8 @@ export const AppDataSource = new DataSource({
   logging: EnvConfig.get('NODE_ENV') === 'development', // Habilita logging SQL en desarrollo
   entities: [
     UserEntity,
+    BusinessEntity,
+    QuotationRequestEntity,
     // UserEntity // Añade tus entidades aquí
   ],
   migrations: [], // Aquí irán tus archivos de migración
