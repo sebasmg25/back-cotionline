@@ -9,7 +9,7 @@ import { deleteBranchController } from "../controllers/branch/deleteBranch/delet
 const router = Router();
 
 router.post('/create', createBranchValidationRules, CreateBranchController);
-router.put('/:id', updateUserValidationRules, UpdateBranchController);
+router.patch('/:id', updateUserValidationRules, UpdateBranchController);
 router.get('/:id', getBranchController);
 router.delete('/:id', deleteBranchController);
 

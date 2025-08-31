@@ -20,7 +20,7 @@ router.post(
 router.post('/login', 
 loginUserValidationRules,
 loginController.login.bind(userController));
-router.put(
+router.patch(
   '/:id',
   updateUserValidationRules,
   new UpdateUserController().updateUser.bind(new UpdateUserController())
