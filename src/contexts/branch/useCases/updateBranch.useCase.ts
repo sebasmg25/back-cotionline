@@ -1,27 +1,36 @@
 import { Branch } from "../domain/models/branch.model";
-import { BranchRepository } from "../domain/repositories/branch.repository";
+import { BranchRepository, branchUpdateFields } from "../domain/repositories/branch.repository";
 
 export class UpdateBranchUseCase {
     constructor(private branchRepository: BranchRepository){}
 
 
-    async execute(branchId: string, updatedData: Partial<Branch>): Promise<Branch>{
-        const branchToUpdate = await this.branchRepository.findById(branchId);
-
-        if(!branchToUpdate){
-            throw new Error('Sede no encontrada');
-        }
-
-        if(updatedData.name && updatedData.name !== branchToUpdate.name){
-            const existingBranchWithName = await this.branchRepository.findByName(updatedData.name);
-            if(existingBranchWithName && existingBranchWithName.id !== branchToUpdate.id){
-                throw new Error('El nombre que deseas actualizar, ya está en uso.');
+    async update(id: string, name?:string, address?: string, city?: string): Promise<Branch | null>{
+            const existBranch = await this.branchRepository.findById(id);
+            if(!existBranch){
+                throw new Error("El usuario que intentas actualizar no existe");
             }
+    
+            const updateFields: branchUpdateFields = {};
+            let hasChanges = false;
+            if (name !== undefined && name !== existBranch.name){
+            updateFields.name = name;
+            hasChanges = true;
+            }
+    
+            if (address !== undefined && address !== existBranch.address){
+            updateFields.address = address;
+            hasChanges = true;
+            }
+            if (city !== undefined && city !== existBranch.city){
+            updateFields.city = city;
+            hasChanges = true;
+            }
+    
+            if (!hasChanges){
+                throw new Error('No se detectaron cambios en los campos enviados.');
+            }
+            const updateUser = await this.branchRepository.update(id, updateFields);
+            return updateUser;
         }
-
-        const updatedBranch = Object.assign(branchToUpdate, updatedData);
-        const savedBranch = await this.branchRepository.save(updatedBranch);
-
-        return savedBranch
-    }
 }

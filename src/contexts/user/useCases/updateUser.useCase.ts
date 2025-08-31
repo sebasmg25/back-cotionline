@@ -1,22 +1,36 @@
 import {User} from '../domain/models/user.model';
-import {UserRepository} from '../domain/repositories/user.repository';
+import {UserRepository, UserUpdateFields} from '../domain/repositories/user.repository';
 
 export class UpdateUserUseCase {
     constructor(private userRepository: UserRepository){}
 
-    async execute(userId: string, updatedData: Partial<User>): Promise<User>{
-        const userToUpdate = await this.userRepository.findById(userId);
-
-        if(!userToUpdate){
-            throw new Error("Usuario no encontrado.");
-            
+    async update(id: string, name?:string, lastName?: string, city?: string): Promise<User | null>{
+        const existingUser = await this.userRepository.findById(id);
+        if(!existingUser){
+            throw new Error("El usuario que intentas actualizar no existe");
         }
 
-    const updatedUser = Object.assign(userToUpdate, updatedData);
-    
-    const savedUSer = await this.userRepository.save(updatedUser);
+        const updateFields: UserUpdateFields = {};
+        let hasChanges = false;
+        if (name !== undefined && name !== existingUser.name){
+        updateFields.name = name;
+        hasChanges = true;
+        }
 
-    return savedUSer;
+        if (lastName !== undefined && lastName !== existingUser.lastName){
+        updateFields.lastName = lastName;
+        hasChanges = true;
+        }
+        if (city !== undefined && city !== existingUser.city){
+        updateFields.city = city;
+        hasChanges = true;
+        }
+
+        if (!hasChanges){
+            throw new Error('No se detectaron cambios en los campos enviados.');
+        }
+        const updateUser = await this.userRepository.update(id, updateFields);
+        return updateUser;
     }
     
 }
