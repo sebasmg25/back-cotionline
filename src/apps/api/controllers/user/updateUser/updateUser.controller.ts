@@ -1,7 +1,5 @@
 import {Request, Response} from 'express';
 import { UpdateUserUseCase } from '../../../../../contexts/user/useCases/updateUser.useCase';
-import {validationResult} from 'express-validator';
-import {UpdateUSerDto} from '../../../../../contexts/user/interfaces/dtos/updateUser.dto';
 import {TypeORMUserRepository} from '../../../../../contexts/user/infrastructure/persistance/typeorm/typeOrmUserRepository';
 
 export class UpdateUserController{
@@ -12,30 +10,28 @@ export class UpdateUserController{
         this.updateUserUseCase = new UpdateUserUseCase(userRepository);
     }
 
-    async updateUser(req: Request, res: Response): Promise<void> {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(400).json({ errors: errors.array() });
-            return;
-        }
-
+    async update(req: Request, res: Response): Promise<void> {
         try{
-            const userId = req.params.id;
-            const updatedData: UpdateUSerDto = req.body;
+            const {id} = req.params;
+            const {name, lastName, city} = req.body;
 
-            const updatedUser = await this.updateUserUseCase.execute(userId, updatedData);
-
-            const {password, ...userResponse} = updatedUser;
-            res.status(200).json({message: 'Usuario actualizado correctamente', user: userResponse});
-        } catch (error: any) {
-            if (error.message === 'Usuario no encontrado.') {
-                res.status(404).json({message: error.message});
-            } else if (error.message === 'El nuevo correo ya esta en uso.') {
-                res.status(409).json({message: error.message});
-            } else {
-                console.error('Error al actualizar el usuario:', error);
-                res.status(500).json({message: 'Error interno del servidor'});  
-            }  
+            if(!name && !lastName && !city){
+                res.status(400).json({message: 'Al menos un campo debe ser proporcionado para la actualización.'});
+                return;
         }
-    }   
+        const updateUser = await this.updateUserUseCase.update(id, name, lastName, city);
+        res.status(200).json({message: 'Usuario actualizado exitosamente', data: updateUser});
+        }catch(error:any){
+            console.log('Error al actualizar el usuario', error);
+            if(error.message.includes('No existe.')){
+                res.status(404).json({message: error.message});
+            }else if(error.message.includes('Ya existe')){
+                res.status(409).json({message: error.message});
+            }else if(error.message.includes('No se detectaron cambios en los campos enviados.')){
+                res.status(400).json({message: error.message});
+            }else{
+                res.status(500).json({message: 'Error interno del servidor'});
+            }
+        }
+    }
 }

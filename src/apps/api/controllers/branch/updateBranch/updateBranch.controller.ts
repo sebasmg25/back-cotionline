@@ -5,30 +5,36 @@ import { UpdateBranchUseCase } from '../../../../../contexts/branch/useCases/upd
 import { TypeORMBranchRepository } from '../../../../../contexts/branch/infrastructure/persistance/typeorm/typeOrmBranchRepository';
 import { UpdateBranchDto } from '../../../../../contexts/branch/interfaces/dtos/updateBranch.dto';
 
-const branchRepository = new TypeORMBranchRepository();
-const updateBranchUseCase = new UpdateBranchUseCase(branchRepository);
+export class UpdateBranchController{
+    private updateBranchUseCase: UpdateBranchUseCase;
 
-export async function UpdateBranchController(req: Request<any, any, UpdateBranchDto>, res: Response) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  try {
-    const sedeId = req.params.id;
-    const updatedData: UpdateBranchDto = req.body;
-    
-    const updatedSede = await updateBranchUseCase.execute(sedeId, updatedData);
-
-    res.status(200).json({ message: 'Sede actualizada exitosamente', sede: updatedSede });
-  } catch (error: any) {
-    if (error.message === 'Sede no encontrada.') {
-      return res.status(404).json({ message: error.message });
+    constructor(){
+        const branchRepository = new TypeORMBranchRepository();
+        this.updateBranchUseCase = new UpdateBranchUseCase(branchRepository);
     }
-    if (error.message === 'El nuevo nombre de sede ya está en uso.') {
-      return res.status(409).json({ message: error.message });
+
+    async update(req: Request, res: Response): Promise<void> {
+        try{
+            const {id} = req.params;
+            const { name, lastName, city} = req.body;
+
+            if(!name && !lastName && !city){
+                res.status(400).json({message: 'Al menos un campo debe ser proporcionado para la actualización.'});
+                return;
+        }
+        const updateBranch = await this.updateBranchUseCase.update(id,name, lastName, city);
+        res.status(200).json({message: 'Sede actualizada exitosamente', data: updateBranch});
+        }catch(error:any){
+            console.log('Error al actualizar el negocio', error);
+            if(error.message.includes('No existe.')){
+                res.status(404).json({message: error.message});
+            }else if(error.message.includes('Ya existe')){
+                res.status(409).json({message: error.message});
+            }else if(error.message.includes('No se detectaron cambios en los campos enviados.')){
+                res.status(400).json({message: error.message});
+            }else{
+                res.status(500).json({message: 'Error interno del servidor'});
+            }
+        }
     }
-    console.error('Error al actualizar sede:', error);
-    return res.status(500).json({ message: 'Error interno del servidor.' });
-  }
 }

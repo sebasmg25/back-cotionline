@@ -23,7 +23,7 @@ loginController.login.bind(userController));
 router.patch(
   '/:id',
   updateUserValidationRules,
-  new UpdateUserController().updateUser.bind(new UpdateUserController())
+  new UpdateUserController().update.bind(new UpdateUserController())
 );
 router.get(
   '/:id', GetUserController

@@ -1,5 +1,5 @@
 import { Branch } from "../domain/models/branch.model";
-import { BranchRepository, branchUpdateFields } from "../domain/repositories/branch.repository";
+import { BranchRepository, BranchUpdateFields } from "../domain/repositories/branch.repository";
 
 export class UpdateBranchUseCase {
     constructor(private branchRepository: BranchRepository){}
@@ -11,7 +11,7 @@ export class UpdateBranchUseCase {
                 throw new Error("El usuario que intentas actualizar no existe");
             }
     
-            const updateFields: branchUpdateFields = {};
+            const updateFields: BranchUpdateFields = {};
             let hasChanges = false;
             if (name !== undefined && name !== existBranch.name){
             updateFields.name = name;
