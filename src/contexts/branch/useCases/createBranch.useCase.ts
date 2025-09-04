@@ -4,7 +4,7 @@ import {  BranchRepository} from "../domain/repositories/branch.repository";
 export class CreateBranchUseCase {
     constructor(private branchRepository: BranchRepository){}
 
-    async execute(name: string, address: string, city: string, business: string): Promise<Branch>{
+    async save(name: string, address: string, city: string, business: string): Promise<Branch>{
         const existingBranch = await this.branchRepository.findByName(name);
 
         if(existingBranch){
