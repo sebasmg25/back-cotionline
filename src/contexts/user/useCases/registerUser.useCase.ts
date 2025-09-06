@@ -1,17 +1,14 @@
 import { User } from '../domain/models/user.model';
 import { UserRepository } from '../domain/repositories/user.repository';
+import { UserResponseDto } from '../interfaces/dtos/userResponse.dto';
 
 export class RegisterUserUseCase {
   constructor(private userRepository: UserRepository) {}
 
-  async saveUser(
-    identification: string,
-    name: string,
-    lastName: string,
-    email: string,
-    password: string,
-    city: string
-  ) {
+  async saveUser(userRequestDto: UserResponseDto): Promise<UserResponseDto> {
+    const { identification, name, lastName, email, password, city } =
+      userRequestDto;
+
     const existIdentification = await this.userRepository.findByIdentification(
       identification
     );
@@ -26,15 +23,9 @@ export class RegisterUserUseCase {
       );
     }
 
-    const saveUser = new User(
-      identification,
-      name,
-      lastName,
-      email,
-      password,
-      city
-    );
-    const savedUser = await this.userRepository.save(saveUser);
-    return savedUser;
+    const userSave: User = userRequestDto.fromDto();
+    const savedUser = await this.userRepository.save(userSave);
+
+    return UserResponseDto.toDto(savedUser);
   }
 }

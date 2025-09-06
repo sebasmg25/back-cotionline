@@ -138,6 +138,7 @@ export class TypeORMUserRepository implements UserRepository {
       console.log(
         `Error: No se pudo eliminar el usuario con ID ${id} a pesar de haberlo encontrado.`
       );
+      return null;
     }
     return new User(
       userEntity.identification,
