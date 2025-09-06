@@ -14,15 +14,9 @@ export class CreateUserController {
 
   async registerUser(req: Request, res: Response): Promise<void> {
     try {
-      // const errors = validationResult(req);
-      // if (!errors.isEmpty()) {
-      //   res.status(400).json({ errors: errors.array() });
-      //   return;
-      // }
-
       const { identification, email, name, lastName, city, password } =
         req.body;
-      // const userData: RegisterUserRequestDto = req.body;
+
       const userData = new UserResponseDto(
         '',
         identification,
@@ -34,25 +28,7 @@ export class CreateUserController {
       userData.password = password;
 
       // Llama al servicio de dominio para registrar el usuario
-      const userResult = await this.registerUserUseCase.saveUser(
-        userData
-        // userData.identification,
-        // userData.name,
-        // userData.lastName,
-        // userData.email,
-        // userData.password,
-        // userData.city
-      );
-
-      // // Mapea el modelo de dominio a un DTO de Salida
-      // const userResponseData: UserResponseDto = {
-      //   id: newUser.id!,
-      //   identification: newUser.identification,
-      //   name: newUser.name,
-      //   lastName: newUser.lastName,
-      //   email: newUser.email,
-      //   city: newUser.city,
-      // };
+      const userResult = await this.registerUserUseCase.saveUser(userData);
 
       // Envía la respuesta exitosa con el DTO de salida
       res.status(201).json({

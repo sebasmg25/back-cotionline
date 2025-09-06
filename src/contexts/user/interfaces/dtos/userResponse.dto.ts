@@ -27,19 +27,7 @@ export class UserResponseDto {
     this.password = password;
   }
 
-  //A DTO entra modelo - sale DTO
-  static toDto(model: User): UserResponseDto {
-    return new UserResponseDto(
-      model.id,
-      model.identification,
-      model.name,
-      model.lastName,
-      model.email,
-      model.city
-    );
-  }
-
-  //Desde DTO entra un DTO - sale un Modelo
+  // Desde DTO - sale un Modelo
   fromDto(): User {
     return new User(
       this.identification,
@@ -48,6 +36,18 @@ export class UserResponseDto {
       this.email,
       this.password ?? '',
       this.city
+    );
+  }
+
+  // A DTO entra modelo - sale DTO
+  static toDto(model: User): UserResponseDto {
+    return new UserResponseDto(
+      model.id,
+      model.identification,
+      model.name,
+      model.lastName,
+      model.email,
+      model.city
     );
   }
 }

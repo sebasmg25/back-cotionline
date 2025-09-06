@@ -34,14 +34,60 @@ export class BusinessDto {
     );
   }
 
-  toDto(model: Business): BusinessDto {
+  static toDto(model: Business): BusinessDto {
     return new BusinessDto(
-      this.nit,
-      this.name,
-      this.description,
-      this.address,
-      this.userId,
-      this.id
+      model.nit,
+      model.name,
+      model.description,
+      model.address,
+      model.userId,
+      model.id
     );
   }
 }
+
+// export class UpdateBusinessDto {
+//   id: string;
+//   nit?: string;
+//   name?: string;
+//   description?: string;
+//   address?: string;
+//   userId?: string;
+
+//   constructor(
+//     id: string,
+//     nit?: string,
+//     name?: string,
+//     description?: string,
+//     address?: string,
+//     userId?: string
+//   ) {
+//     this.id = id;
+//     this.nit = nit;
+//     this.name = name;
+//     this.description = description;
+//     this.address = address;
+//     this.userId = userId;
+//   }
+
+//   fromDto(): Business {
+//     return new Business(
+//       this.nit,
+//       this.name,
+//       this.description,
+//       this.address,
+//       this.userId,
+//       this.id
+//     );
+//   }
+
+//   static toDto(model: Business): UpdateBusinessDto {
+//     return new UpdateBusinessDto(
+//       model.id,
+//       model.nit,
+//       model.name,
+//       model.description,
+//       model.address
+//     );
+//   }
+// }
