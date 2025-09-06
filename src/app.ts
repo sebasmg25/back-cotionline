@@ -33,6 +33,9 @@ export class App {
     });
 
     this.app.use('/users', userRoutes);
+    this.app.use('/business', businessRoutes);
+    this.app.use('/quotationRequests', quotationRequestRoutes);
+    this.app.use('/branches', branchRoutes);
 
     // this.app.use('/users', userRoutes); // Descomenta cuando crees tus rutas de usuario
   }
