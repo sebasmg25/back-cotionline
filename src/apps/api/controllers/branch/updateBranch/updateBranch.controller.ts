@@ -16,16 +16,16 @@ export class UpdateBranchController{
     async update(req: Request, res: Response): Promise<void> {
         try{
             const {id} = req.params;
-            const { name, lastName, city} = req.body;
+            const { name, address, city } = req.body;
 
-            if(!name && !lastName && !city){
+            if(!name && !address && !city){
                 res.status(400).json({message: 'Al menos un campo debe ser proporcionado para la actualización.'});
                 return;
         }
-        const updateBranch = await this.updateBranchUseCase.update(id,name, lastName, city);
+        const updateBranch = await this.updateBranchUseCase.update(id, name, address, city);
         res.status(200).json({message: 'Sede actualizada exitosamente', data: updateBranch});
         }catch(error:any){
-            console.log('Error al actualizar el negocio', error);
+            console.log('Error al actualizar la sede', error);
             if(error.message.includes('No existe.')){
                 res.status(404).json({message: error.message});
             }else if(error.message.includes('Ya existe')){

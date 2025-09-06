@@ -8,7 +8,7 @@ export class UpdateBranchUseCase {
     async update(id: string, name?:string, address?: string, city?: string): Promise<Branch | null>{
             const existBranch = await this.branchRepository.findById(id);
             if(!existBranch){
-                throw new Error("El usuario que intentas actualizar no existe");
+                throw new Error("La sede que intentas actualizar no existe");
             }
     
             const updateFields: BranchUpdateFields = {};
@@ -26,6 +26,7 @@ export class UpdateBranchUseCase {
             updateFields.city = city;
             hasChanges = true;
             }
+            
     
             if (!hasChanges){
                 throw new Error('No se detectaron cambios en los campos enviados.');
