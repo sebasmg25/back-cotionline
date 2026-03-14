@@ -1,0 +1,7 @@
+organization=sebasmg25
+projectKey=sebasmg25_back-cotionline
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.82941
+dashboardUrl=https://sonarcloud.io/dashboard?id=sebasmg25_back-cotionline
+ceTaskId=AZzuf7tTxLuY_-wpVsTU
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZzuf7tTxLuY_-wpVsTU

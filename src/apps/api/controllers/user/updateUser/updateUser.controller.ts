@@ -1,37 +1,61 @@
-import {Request, Response} from 'express';
+import { Response } from 'express';
 import { UpdateUserUseCase } from '../../../../../contexts/user/useCases/updateUser.useCase';
-import {TypeORMUserRepository} from '../../../../../contexts/user/infrastructure/persistance/typeorm/typeOrmUserRepository';
+import { AuthRequest } from '../../../middlewares/jwtVerifier';
+import { UpdateUserRequest } from '../../../../../contexts/user/interfaces/dtos/user.dto';
 
-export class UpdateUserController{
-    private updateUserUseCase: UpdateUserUseCase;
+export class UpdateUserController {
+  constructor(private updateUserUseCase: UpdateUserUseCase) {}
 
-    constructor(){
-        const userRepository = new TypeORMUserRepository();
-        this.updateUserUseCase = new UpdateUserUseCase(userRepository);
+  async handle(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      const userIdSession = req.userSession?.id;
+
+      if (!userIdSession) {
+        res.status(401).json({ message: 'Sesión no válida o expirada.' });
+        return;
+      }
+
+      const updateData: UpdateUserRequest = {
+        name: req.body.name,
+        lastName: req.body.lastName,
+        department: req.body.department, // Campo capturado
+        city: req.body.city,
+        password: req.body.password,
+      };
+
+      const updatedUser = await this.updateUserUseCase.execute(
+        userIdSession,
+        updateData,
+      );
+
+      res.status(200).json({
+        message: 'Perfil actualizado exitosamente.',
+        data: updatedUser,
+      });
+    } catch (error: any) {
+      const errorMessage = error.message;
+
+      if (errorMessage.includes('no existe')) {
+        res.status(404).json({ message: errorMessage });
+        return;
+      }
+
+      // Añadimos el blindaje para errores geográficos
+      if (
+        errorMessage.includes('No se detectaron cambios') ||
+        errorMessage.includes('igual a la anterior') ||
+        errorMessage.includes('no es válido') ||
+        errorMessage.includes('no pertenece al departamento')
+      ) {
+        res.status(400).json({ message: errorMessage });
+        return;
+      }
+
+      const safeErrorMessage = errorMessage.replaceAll(/[\r\n]/g, '');
+      console.error('[UpdateUserController] Error:', safeErrorMessage);
+      res
+        .status(500)
+        .json({ message: 'Error interno al actualizar el perfil.' });
     }
-
-    async update(req: Request, res: Response): Promise<void> {
-        try{
-            const {id} = req.params;
-            const {name, lastName, city} = req.body;
-
-            if(!name && !lastName && !city){
-                res.status(400).json({message: 'Al menos un campo debe ser proporcionado para la actualización.'});
-                return;
-        }
-        const updateUser = await this.updateUserUseCase.update(id, name, lastName, city);
-        res.status(200).json({message: 'Usuario actualizado exitosamente', data: updateUser});
-        }catch(error:any){
-            console.log('Error al actualizar el usuario', error);
-            if(error.message.includes('No existe.')){
-                res.status(404).json({message: error.message});
-            }else if(error.message.includes('Ya existe')){
-                res.status(409).json({message: error.message});
-            }else if(error.message.includes('No se detectaron cambios en los campos enviados.')){
-                res.status(400).json({message: error.message});
-            }else{
-                res.status(500).json({message: 'Error interno del servidor'});
-            }
-        }
-    }
+  }
 }

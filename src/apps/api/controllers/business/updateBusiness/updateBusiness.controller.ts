@@ -1,46 +1,53 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { AuthRequest } from '../../../middlewares/jwtVerifier';
 import { UpdateBusinessUseCase } from '../../../../../contexts/business/useCases/updateBusiness.useCase';
-import { TypeORMBusinessRepository } from '../../../../../contexts/business/infraestructure/persistance/typeorm/typeOrmBusinessRepository';
+import { UpdateBusinessRequest } from '../../../../../contexts/business/interfaces/dtos/business.dto';
 
 export class UpdateBusinessController {
-  private updateBusinessUseCase: UpdateBusinessUseCase;
-  constructor() {
-    const businessRepository = new TypeORMBusinessRepository();
-    this.updateBusinessUseCase = new UpdateBusinessUseCase(businessRepository);
-  }
+  constructor(private updateBusinessUseCase: UpdateBusinessUseCase) {}
 
-  async updateBusiness(req: Request, res: Response): Promise<void> {
+  async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const { nit, name, description, address } = req.body;
+      const userId = req.userSession!.id;
 
-      const updateBusiness = await this.updateBusinessUseCase.update(
+      // 1. Extraemos archivos de Multer
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
+      // 2. Construimos el DTO combinando Body (texto) y Files (rutas)
+      const updateData: UpdateBusinessRequest = {
+        ...req.body,
+        rutUrl: files?.['rut'] ? files['rut'][0].path : undefined,
+        chamberOfCommerceUrl: files?.['chamberOfCommerce']
+          ? files['chamberOfCommerce'][0].path
+          : undefined,
+      };
+
+      // 3. Ejecutamos el caso de uso
+      const updatedBusiness = await this.updateBusinessUseCase.execute(
         id,
-        nit,
-        name,
-        description,
-        address
+        updateData,
+        userId,
       );
 
       res.status(200).json({
         message: 'Negocio actualizado exitosamente',
-        data: updateBusiness,
+        data: updatedBusiness,
       });
     } catch (error: any) {
-      console.log('Error al actualizar el negocio:', error);
-      if (error.message.includes('No existe.')) {
-        res.status(404).json({ message: error.message });
-      } else if (error.message.includes('Ya existe.')) {
-        res.status(409).json({ message: error.message });
-      } else if (
-        error.message.includes(
-          'No se detectaron cambios en los campos enviados.'
-        )
-      ) {
-        res.status(400).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: 'Error interno del servidor' });
-      }
+      // Manejo de errores (se mantienen tus validaciones)
+      const statusMap: Record<string, number> = {
+        'El negocio que intentas actualizar no existe.': 404,
+        'No tienes permiso para modificar este negocio.': 403,
+        'Ya existe otro negocio registrado con este nit.': 409,
+        'No se detectaron cambios en los campos enviados.': 400,
+      };
+
+      const status = statusMap[error.message] || 500;
+      res.status(status).json({ message: error.message });
+
+      if (status === 500)
+        console.error('[UpdateBusinessController] Error:', error);
     }
   }
 }

@@ -1,42 +1,56 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { AuthRequest } from '../../../middlewares/jwtVerifier';
 import { RegisterBusinessUseCase } from '../../../../../contexts/business/useCases/registerBusiness.useCase';
-import { TypeORMBusinessRepository } from '../../../../../contexts/business/infraestructure/persistance/typeorm/typeOrmBusinessRepository';
-import { BusinessDto } from '../../../../../contexts/business/interfaces/dtos/business.dto';
+import { CreateBusinessRequest } from '../../../../../contexts/business/interfaces/dtos/business.dto';
 
 export class CreateBusinessController {
-  private registerBusinessUseCase: RegisterBusinessUseCase;
-  constructor() {
-    const businessRepository = new TypeORMBusinessRepository();
-    this.registerBusinessUseCase = new RegisterBusinessUseCase(
-      businessRepository
-    );
-  }
+  constructor(private registerBusinessUseCase: RegisterBusinessUseCase) {}
 
-  async registerBusiness(req: Request, res: Response): Promise<void> {
+  async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const { nit, name, description, address, userId } = req.body;
+      // 1. Extraemos el ID del usuario directamente del Token
+      const userId = req.userSession!.id;
 
-      const businessData = new BusinessDto(
+      // 2. Extraemos los campos de texto del body
+      const { nit, name, description, address } = req.body;
+
+      // 3. Procesamos los archivos (Multer)
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
+      const rutUrl = files?.['rut'] ? files['rut'][0].path : undefined;
+      const chamberOfCommerceUrl = files?.['chamberOfCommerce']
+        ? files['chamberOfCommerce'][0].path
+        : undefined;
+
+      // 4. Construimos el objeto de petición siguiendo la interfaz CreateBusinessRequest
+      const businessData: CreateBusinessRequest = {
         nit,
         name,
         description,
         address,
-        userId
+        rutUrl,
+        chamberOfCommerceUrl,
+      };
+
+      // 5. Ejecutamos el caso de uso pasando el ID de sesión seguro
+      const savedBusiness = await this.registerBusinessUseCase.execute(
+        businessData,
+        userId,
       );
 
-      const saveBusiness = await this.registerBusinessUseCase.save(
-        businessData
-      );
-
-      res.status(200).json({ message: 'BUSINESS', saveBusiness });
+      res.status(201).json({
+        message: 'Negocio registrado con éxito y en espera de verificación.',
+        data: savedBusiness,
+      });
     } catch (error: any) {
-      console.log('Error al registrar el negocio', error);
-
-      if (error.message.includes('ya registrado')) {
+      // Sincronización exacta con el mensaje del Use Case
+      if (error.message === 'Ya existe un negocio registrado con este nit') {
         res.status(409).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: 'Error interno del servidor' });
+        return;
       }
+
+      console.error('[RegisterBusinessController] Error inesperado:', error);
+      res.status(500).json({ message: 'Error interno del servidor.' });
     }
   }
 }

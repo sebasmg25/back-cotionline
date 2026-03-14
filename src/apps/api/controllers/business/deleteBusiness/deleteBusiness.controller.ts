@@ -1,31 +1,47 @@
-import { Request, Response } from 'express';
-import { DeleteBusinessUseCase } from '../../../../../contexts/business/useCases/deleteBusinessUseCase';
-import { TypeORMBusinessRepository } from '../../../../../contexts/business/infraestructure/persistance/typeorm/typeOrmBusinessRepository';
+import { Response } from 'express';
+import { AuthRequest } from '../../../middlewares/jwtVerifier';
+import { DeleteBusinessUseCase } from '../../../../../contexts/business/useCases/deleteBusiness.useCase';
 
 export class DeleteBusinessController {
-  private deleteBusinessUseCase: DeleteBusinessUseCase;
-  constructor() {
-    const businessRepository = new TypeORMBusinessRepository();
-    this.deleteBusinessUseCase = new DeleteBusinessUseCase(businessRepository);
-  }
+  constructor(private deleteBusinessUseCase: DeleteBusinessUseCase) {}
 
-  async deleteBusiness(req: Request, res: Response): Promise<void> {
+  async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
       const { id } = req.params;
+      const userId = req.userSession!.id;
 
-      const deleteBusiness = await this.deleteBusinessUseCase.delete(id);
+      const deletedBusiness = await this.deleteBusinessUseCase.execute(
+        id,
+        userId,
+      );
 
       res.status(200).json({
         message: 'Negocio eliminado exitosamente',
-        data: deleteBusiness,
+        data: deletedBusiness,
       });
     } catch (error: any) {
-      console.log('Error al eliminar el negocio:', error);
-      if (error.message.includes('No existe')) {
+      // 1. No existe (404)
+      if (error.message === 'Negocio no encontrado.') {
         res.status(404).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: 'Error interno del servidor' });
+        return;
       }
+
+      // 2. Seguridad - No es el dueño (403)
+      if (error.message === 'No tienes permiso para acceder a este negocio.') {
+        res.status(403).json({ message: error.message });
+        return;
+      }
+
+      // 3. Error en la persistencia (500)
+      if (
+        error.message === 'No se pudo eliminar el negocio de la base de datos.'
+      ) {
+        res.status(500).json({ message: error.message });
+        return;
+      }
+
+      console.error('[DeleteBusinessController] Error inesperado:', error);
+      res.status(500).json({ message: 'Error interno del servidor' });
     }
   }
 }

@@ -1,31 +1,49 @@
-import { Request, Response } from "express";
-import { validationResult } from "express-validator";
-import { CreateBranchUseCase } from "../../../../../contexts/branch/useCases/createBranch.useCase";
-import { TypeORMBranchRepository } from "../../../../../contexts/branch/infrastructure/persistance/typeorm/typeOrmBranchRepository";
-import { CreateBranchDto } from "../../../../../contexts/branch/interfaces/dtos/createBranch.dto";
+import { Response } from 'express';
+import { AuthRequest } from '../../../middlewares/jwtVerifier';
+import { CreateBranchUseCase } from '../../../../../contexts/branch/useCases/createBranch.useCase';
+import { CreateBranchRequest } from '../../../../../contexts/branch/interfaces/dtos/branch.dto';
 
 export class CreateBranchController {
-    private createBranchUseCase: CreateBranchUseCase;
+  constructor(private createBranchUseCase: CreateBranchUseCase) {}
 
-    
-    constructor(){
-        const branchRepository = new TypeORMBranchRepository();
-        this.createBranchUseCase = new CreateBranchUseCase(branchRepository);
+  async handle(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      // Tomamos el ID del token (JwtVerifier ya aseguró que existe si llegó aquí)
+      const userId = req.userSession!.id;
+
+      const branchData: CreateBranchRequest = req.body;
+
+      // Pasamos los datos del body Y el ID de la sesión por separado
+      const savedBranch = await this.createBranchUseCase.execute(
+        branchData,
+        userId,
+      );
+
+      res.status(201).json({
+        message: 'Sede creada con éxito',
+        data: savedBranch,
+      });
+    } catch (error: any) {
+      // Errores de Negocio/Seguridad
+      if (
+        error.message === 'No tienes permiso para agregar sedes a este negocio.'
+      ) {
+        res.status(403).json({ message: error.message });
+        return;
+      }
+
+      if (error.message === 'Ya existe una sede con este nombre.') {
+        res.status(409).json({ message: error.message });
+        return;
+      }
+
+      if (error.message === 'El negocio especificado no existe.') {
+        res.status(404).json({ message: error.message });
+        return;
+      }
+
+      console.error('[CreateBranchController] Error:', error);
+      res.status(500).json({ message: 'Error interno del servidor.' });
     }
-    async createBranch(req: Request, res: Response): Promise<void>{
-        try{
-            const{name, address, city, business} = req.body;
-            const saveBranch = await this.createBranchUseCase.save(name, address, city, business);
-
-            res.status(200).json({message: 'BRANCH', saveBranch});
-        }catch(error: any){
-            console.log('Error al crear la sede', error);
-
-            if(error.message.includes('ya registrado')){
-                res.status(409).json({message: error.message});
-            }else{
-                res.status(500).json({message: 'Error interno del servidor'});
-            }
-        }
-    }
+  }
 }

@@ -14,7 +14,7 @@ export class EnvConfig {
   public static get(key: string): string {
     if (!EnvConfig.configLoaded) {
       console.warn(
-        'Variables de entorno no cargadas. Asegúrate de llamar a EnvConfig.load() al inicio de tu aplicación.'
+        'Variables de entorno no cargadas. Asegúrate de llamar a EnvConfig.load() al inicio de tu aplicación.',
       );
       dotenv.config(); // Cargar si no se ha cargado previamente (fallback)
       EnvConfig.configLoaded = true;

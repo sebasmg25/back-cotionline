@@ -1,57 +1,63 @@
 import { Request, Response } from 'express';
 import { RegisterUserUseCase } from '../../../../../contexts/user/useCases/registerUser.useCase';
-import { TypeORMUserRepository } from '../../../../../contexts/user/infrastructure/persistance/typeorm/typeOrmUserRepository';
-import { RegisterUserRequestDto } from '../../../../../contexts/user/interfaces/dtos/registerUserRequest.dto';
-import { UserResponseDto } from '../../../../../contexts/user/interfaces/dtos/userResponse.dto';
+import { CreateUserRequest } from '../../../../../contexts/user/interfaces/dtos/user.dto';
 
 export class CreateUserController {
-  private registerUserUseCase: RegisterUserUseCase;
+  constructor(private registerUserUseCase: RegisterUserUseCase) {}
 
-  constructor() {
-    const userRepository = new TypeORMUserRepository();
-    this.registerUserUseCase = new RegisterUserUseCase(userRepository);
-  }
-
-  async registerUser(req: Request, res: Response): Promise<void> {
+  async handle(req: Request, res: Response): Promise<void> {
     try {
-      const { identification, email, name, lastName, city, password } =
-        req.body;
+      // 1. Extraemos los datos del body
+      const signupData: CreateUserRequest = {
+        identification: req.body.identification,
+        name: req.body.name,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        password: req.body.password,
+        department: req.body.department, // Agregado
+        city: req.body.city,
+      };
 
-      const userData = new UserResponseDto(
-        '',
-        identification,
-        name,
-        lastName,
-        email,
-        city
-      );
-      userData.password = password;
+      // 2. Ejecutamos el caso de uso
+      const result = await this.registerUserUseCase.execute(signupData);
 
-      // Llama al servicio de dominio para registrar el usuario
-      const userResult = await this.registerUserUseCase.saveUser(userData);
-
-      // Envía la respuesta exitosa con el DTO de salida
+      // 3. Respuesta exitosa (201 Created)
       res.status(201).json({
-        message: 'Usuario registrado exitosamente',
-        user: userResult,
-        // user: userResponseData, // Asegura que el DTO se adjunta directamente al campo 'user'
+        message: 'Usuario registrado exitosamente.',
+        data: result,
       });
     } catch (error: any) {
-      console.error('Error al registrar el usuario:', error); // Usar console.error para errores
+      const errorMessage = error.message;
 
-      // Manejo de errores específicos con códigos de estado HTTP adecuados
-      if (
-        error.message.includes('ya registrado') ||
-        error.message.includes('ya existe')
-      ) {
-        // Unicidad (Email o Identificación ya existen)
-        res.status(409).json({ message: error.message }); // 409 Conflict
-      } else {
-        // Errores inesperados o no capturados
-        res.status(500).json({
-          message: 'Error interno del servidor al registrar el usuario.',
-        });
+      // Blindaje: Manejo de conflictos (Usuarios duplicados) - 409
+      if (errorMessage.includes('Ya existe')) {
+        res.status(409).json({ message: errorMessage });
+        return;
       }
+
+      // Blindaje: Errores de validación geográfica (Coherencia Dept/Ciudad) - 400
+      if (
+        errorMessage.includes('no es válido') ||
+        errorMessage.includes('no pertenece al departamento')
+      ) {
+        res.status(400).json({ message: errorMessage });
+        return;
+      }
+
+      // Blindaje: Errores de configuración del sistema - 500
+      if (errorMessage.includes('plan inicial')) {
+        res.status(500).json({
+          message:
+            'El sistema no está disponible para registros en este momento.',
+        });
+        return;
+      }
+
+      const safeErrorMessage = errorMessage.replaceAll(/[\r\n]/g, '');
+      console.error('[CreateUserController] Error:', safeErrorMessage);
+      res.status(500).json({
+        message: 'Error interno del servidor al procesar el registro.',
+      });
     }
   }
 }

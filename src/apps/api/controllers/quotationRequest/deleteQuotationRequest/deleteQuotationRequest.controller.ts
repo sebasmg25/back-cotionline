@@ -1,37 +1,45 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { AuthRequest } from '../../../middlewares/jwtVerifier';
 import { DeleteQuotationRequestUseCase } from '../../../../../contexts/quotationRequest/useCases/deleteQuotationRequest.useCase';
-import { TypeORMQuotationRequestRepository } from '../../../../../contexts/quotationRequest/infraestructure/persistance/typeorm/typeOrmQuotationRequestRepository';
 
 export class DeleteQuotationRequestController {
-  private deleteQuotationRequestUseCase: DeleteQuotationRequestUseCase;
+  constructor(
+    private deleteQuotationRequestUseCase: DeleteQuotationRequestUseCase,
+  ) {}
 
-  constructor() {
-    const quotationRequestRepository = new TypeORMQuotationRequestRepository();
-    this.deleteQuotationRequestUseCase = new DeleteQuotationRequestUseCase(
-      quotationRequestRepository
-    );
-  }
-  async deleteQuotationRequest(req: Request, res: Response): Promise<void> {
+  async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
       const { id } = req.params;
+      const userSession = req.userSession!;
 
-      const deleteQuotationRequest =
-        await this.deleteQuotationRequestUseCase.delete(id);
+      // Pasamos el ID del recurso y el contexto de sesión
+      const deletedRequest = await this.deleteQuotationRequestUseCase.execute(
+        id,
+        userSession,
+      );
+
       res.status(200).json({
         message: 'Solicitud de cotización eliminada exitosamente',
-        data: deleteQuotationRequest,
+        data: deletedRequest,
       });
     } catch (error: any) {
-      console.log('Error al eliminar la solicitud de cotización', error);
-      if (
-        error.message.includes(
-          'La solicitud de cotización que deseas eliminar no existe'
-        )
-      ) {
-        res.status(409).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: 'Error interno del servidor' });
+      const errorMessage = error.message.toLowerCase();
+
+      // 1. Error de Seguridad - Forbidden (403)
+      if (errorMessage.includes('no tienes permiso')) {
+        res.status(403).json({ message: error.message });
+        return;
       }
+
+      // 2. Error de Negocio - Not Found (404)
+      if (errorMessage.includes('no existe')) {
+        res.status(404).json({ message: error.message });
+        return;
+      }
+
+      // 3. Error técnico inesperado (500)
+      console.error('[DeleteQuotationRequestController] Error:', error);
+      res.status(500).json({ message: 'Error interno del servidor' });
     }
   }
 }

@@ -1,40 +1,65 @@
-
-import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
+import { Response } from 'express';
+import { AuthRequest } from '../../../middlewares/jwtVerifier';
 import { UpdateBranchUseCase } from '../../../../../contexts/branch/useCases/updateBranch.useCase';
-import { TypeORMBranchRepository } from '../../../../../contexts/branch/infrastructure/persistance/typeorm/typeOrmBranchRepository';
-import { UpdateBranchDto } from '../../../../../contexts/branch/interfaces/dtos/updateBranch.dto';
+import { UpdateBranchRequest } from '../../../../../contexts/branch/interfaces/dtos/branch.dto';
 
-export class UpdateBranchController{
-    private updateBranchUseCase: UpdateBranchUseCase;
+export class UpdateBranchController {
+  constructor(private updateBranchUseCase: UpdateBranchUseCase) {}
 
-    constructor(){
-        const branchRepository = new TypeORMBranchRepository();
-        this.updateBranchUseCase = new UpdateBranchUseCase(branchRepository);
+  async handle(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const userId = req.userSession!.id; // Extraído del token
+      const branchData: UpdateBranchRequest = req.body;
+
+      const updateBranch = await this.updateBranchUseCase.execute(
+        id,
+        branchData,
+        userId,
+      );
+
+      res.status(200).json({
+        message: 'Sede actualizada exitosamente',
+        data: updateBranch,
+      });
+    } catch (error: any) {
+      // 1. Error de Autorización (403 Forbidden)
+      if (error.message === 'No tienes permiso para modificar esta sede.') {
+        res.status(403).json({ message: error.message });
+        return;
+      }
+
+      // 2. No existe (404 Not Found)
+      if (error.message === 'La sede que intentas actualizar no existe') {
+        res.status(404).json({ message: error.message });
+        return;
+      }
+
+      // 3. Sin cambios (400 Bad Request)
+      if (
+        error.message === 'No se detectaron cambios en los campos enviados.'
+      ) {
+        res.status(400).json({ message: error.message });
+        return;
+      }
+
+      // Dentro del bloque catch del handle:
+      if (
+        error.message ===
+        'La ciudad proporcionada no es válida en nuestro registro oficial.'
+      ) {
+        res.status(400).json({ message: error.message });
+        return;
+      }
+
+      // 4. Error técnico o de persistencia
+      if (error.message === 'Error al actualizar') {
+        res.status(500).json({ message: error.message });
+        return;
+      }
+
+      console.error('[UpdateBranchController] Error inesperado:', error);
+      res.status(500).json({ message: 'Error interno del servidor' });
     }
-
-    async update(req: Request, res: Response): Promise<void> {
-        try{
-            const {id} = req.params;
-            const { name, address, city } = req.body;
-
-            if(!name && !address && !city){
-                res.status(400).json({message: 'Al menos un campo debe ser proporcionado para la actualización.'});
-                return;
-        }
-        const updateBranch = await this.updateBranchUseCase.update(id, name, address, city);
-        res.status(200).json({message: 'Sede actualizada exitosamente', data: updateBranch});
-        }catch(error:any){
-            console.log('Error al actualizar la sede', error);
-            if(error.message.includes('No existe.')){
-                res.status(404).json({message: error.message});
-            }else if(error.message.includes('Ya existe')){
-                res.status(409).json({message: error.message});
-            }else if(error.message.includes('No se detectaron cambios en los campos enviados.')){
-                res.status(400).json({message: error.message});
-            }else{
-                res.status(500).json({message: 'Error interno del servidor'});
-            }
-        }
-    }
+  }
 }

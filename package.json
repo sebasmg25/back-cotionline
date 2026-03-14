@@ -7,8 +7,11 @@
     "build": "npx tsc",
     "start": "node dist/index.js",
     "dev": "nodemon --exec ts-node src/index.ts",
+    "dev:ts": "ts-node-dev --respawn -- src/index.ts",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:cov": "jest --coverage",
+    "sonar": "sonarqube-scanner"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +25,9 @@
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.1.0",
     "mysql2": "^3.14.2",
+    "nodemailer": "^8.0.1",
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.25"
   },
@@ -30,10 +35,29 @@
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.0.13",
+    "@types/nodemailer": "^7.0.11",
     "@types/reflect-metadata": "^0.0.5",
+    "jest": "^30.3.0",
     "nodemon": "^3.1.10",
+    "sonarqube-scanner": "^4.3.5",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
+  },
+  "sonarqubeScanner": {
+    "serverUrl": "https://sonarcloud.io",
+    "token": "abfcaf969a4f6e09f8f4119637fd0bd068dd4451",
+    "options": {
+      "sonar.projectKey": "sebasmg25_back-cotionline",
+      "sonar.organization": "sebasmg25",
+      "sonar.sources": "src",
+      "sonar.tests": "tests",
+      "sonar.javascript.lcov.reportPaths": "coverage/lcov.info",
+      "sonar.test.inclusions": "tests/**/*.spec.ts",
+      "sonar.typescript.tsconfigPath": "tsconfig.json"
+    }
   }
 }

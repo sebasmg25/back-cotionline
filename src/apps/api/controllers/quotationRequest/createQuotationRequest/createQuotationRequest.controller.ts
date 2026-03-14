@@ -1,50 +1,59 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { AuthRequest } from '../../../middlewares/jwtVerifier';
 import { RegisterQuotationRequestUseCase } from '../../../../../contexts/quotationRequest/useCases/registerQuotationRequest.useCase';
-import { TypeORMQuotationRequestRepository } from '../../../../../contexts/quotationRequest/infraestructure/persistance/typeorm/typeOrmQuotationRequestRepository';
-import {
-  QuotationRequestDto,
-  QuotationRequestResponseDto,
-} from '../../../../../contexts/quotationRequest/interfaces/dtos/quotationRequestResponse.dto';
 
 export class CreateQuotationRequestController {
-  private registerQuotationRequestUseCase: RegisterQuotationRequestUseCase;
+  constructor(
+    private registerQuotationRequestUseCase: RegisterQuotationRequestUseCase,
+  ) {}
 
-  constructor() {
-    const quotationRequestRepository = new TypeORMQuotationRequestRepository();
-    this.registerQuotationRequestUseCase = new RegisterQuotationRequestUseCase(
-      quotationRequestRepository
-    );
-  }
-
-  async registerQuotationRequest(req: Request, res: Response): Promise<void> {
+  async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const { responseDeadline, status, branch, userId } = req.body;
-      const quotationRequestData = new QuotationRequestDto(
-        responseDeadline,
-        status,
-        branch,
-        userId
-      );
-      const savedQuotationRequest =
-        await this.registerQuotationRequestUseCase.save(
-          quotationRequestData
-          // responseDeadline,
-          // status,
-          // branch,
-          // userId
-        );
+      const userSession = req.userSession!;
 
-      const responseDto = QuotationRequestResponseDto.toDto(
-        savedQuotationRequest
+      const result = await this.registerQuotationRequestUseCase.execute(
+        req.body,
+        userSession,
       );
 
       res.status(201).json({
-        message: 'QUOTATION REQUEST',
-        responseDto,
+        message: 'Solicitud de cotización creada exitosamente.',
+        data: result,
       });
     } catch (error: any) {
-      console.log('Error al crear la solicitud de cotización ', error);
-      res.status(500).json({ message: 'Error interno del servidor' });
+      const errorMessage = error.message.toLowerCase();
+
+      // 1. Error de Límites de Suscripción (403)
+      if (errorMessage.includes('límite') || errorMessage.includes('limite')) {
+        res.status(403).json({
+          message: error.message,
+          error: 'PLAN_LIMIT_REACHED',
+        });
+        return;
+      }
+
+      // 2. Errores de existencia (404)
+      if (
+        errorMessage.includes('no encontrado') ||
+        errorMessage.includes('no existe')
+      ) {
+        res.status(404).json({ message: error.message });
+        return;
+      }
+
+      // 3. Errores de configuración o datos inválidos (400)
+      if (
+        errorMessage.includes('determinar') ||
+        errorMessage.includes('asignado')
+      ) {
+        res.status(400).json({ message: error.message });
+        return;
+      }
+
+      console.error('[CreateQuotationRequestController] Error:', error);
+      res.status(500).json({
+        message: 'Error interno del servidor al procesar la solicitud.',
+      });
     }
   }
 }

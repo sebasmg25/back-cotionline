@@ -1,10 +1,13 @@
-import { Business } from '../models/business.model';
+import { Business, BusinessStatus } from '../models/business.model';
 
 export interface BusinessUpdateFields {
   nit?: string;
   name?: string;
   description?: string;
   address?: string;
+  status?: BusinessStatus; // <-- Agregamos esto para permitir verificaciones
+  rutUrl?: string;
+  chamberOfCommerceUrl?: string;
 }
 
 export interface BusinessRepository {
@@ -13,7 +16,8 @@ export interface BusinessRepository {
   findByNit(nit: string): Promise<Business | null>;
   update(
     id: string,
-    businessUpdateFields: BusinessUpdateFields
+    businessUpdateFields: BusinessUpdateFields,
   ): Promise<Business | null>;
   delete(id: string): Promise<Business | null>;
+  findByUserId(userId: string): Promise<Business | null>;
 }

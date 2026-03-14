@@ -1,57 +1,51 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { AuthRequest } from '../../../middlewares/jwtVerifier';
 import { UpdateQuotationRequestUseCase } from '../../../../../contexts/quotationRequest/useCases/updateQuotationRequest.useCase';
-import { TypeORMQuotationRequestRepository } from '../../../../../contexts/quotationRequest/infraestructure/persistance/typeorm/typeOrmQuotationRequestRepository';
 
 export class UpdateQuotationRequestController {
-  private updateQuotationRequestUseCase: UpdateQuotationRequestUseCase;
+  constructor(
+    private updateQuotationRequestUseCase: UpdateQuotationRequestUseCase,
+  ) {}
 
-  constructor() {
-    const quotationRequestRepository = new TypeORMQuotationRequestRepository();
-    this.updateQuotationRequestUseCase = new UpdateQuotationRequestUseCase(
-      quotationRequestRepository
-    );
-  }
-
-  async updatedQuotationRequest(req: Request, res: Response): Promise<void> {
+  async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const { responseDeadline, status, branch } = req.body;
+      const userSession = req.userSession!;
 
-      if (!responseDeadline && !status && !branch) {
-        res.status(400).json({
-          message: 'Se debe proporcionar al menos un campo a actualizar',
-        });
+      // El Caso de Uso ya se encarga de filtrar campos y validar propiedad
+      const updatedRequest = await this.updateQuotationRequestUseCase.execute(
+        id,
+        userSession,
+        req.body,
+      );
+
+      res.status(200).json({
+        message: 'Solicitud de cotización actualizada exitosamente.',
+        data: updatedRequest,
+      });
+    } catch (error: any) {
+      const errorMessage = error.message.toLowerCase();
+
+      // 1. Blindaje de propiedad y existencia (403/404)
+      if (
+        errorMessage.includes('no tienes permiso') ||
+        errorMessage.includes('no existe')
+      ) {
+        // Usamos 404 para no dar pistas sobre IDs existentes de otros usuarios
+        res.status(404).json({ message: error.message });
         return;
       }
 
-      const updatedQuotationRequest =
-        await this.updateQuotationRequestUseCase.update(
-          id,
-          responseDeadline,
-          status,
-          branch
-        );
-      res.status(200).json({
-        message: 'Solicitud de cotización actualizada exitosamente',
-        data: updatedQuotationRequest,
-      });
-    } catch (error: any) {
-      console.log('Error al actualizar el negocio', error);
-      if (
-        error.message.includes(
-          'La solicitud de cotización que deseas actualizar no existe.'
-        )
-      ) {
-        res.status(404).json({ error: error.message });
-      } else if (
-        error.message.includes(
-          'No se detectaron cambios en los campos enviados.'
-        )
-      ) {
-        res.status(400).json({ error: error.message });
-      } else {
-        res.status(500).json({ message: 'Error interno del servidor' });
+      // 2. Errores de lógica (400)
+      if (errorMessage.includes('no se detectaron cambios')) {
+        res.status(400).json({ message: error.message });
+        return;
       }
+
+      console.error('[UpdateQuotationRequestController] Error:', error);
+      res.status(500).json({
+        message: 'Error interno del servidor al actualizar la solicitud.',
+      });
     }
   }
 }
