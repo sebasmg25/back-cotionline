@@ -34,12 +34,18 @@ Este documento detalla los pasos necesarios para configurar las variables de ent
 
 ## 3. 📧 Servicio de Correo (Mailtrap)
 1. **Registro:** Ve a [Mailtrap.io](https://mailtrap.io/), crea una cuenta gratuita, selecciona el tipo de Mail (email sandbox) y el stack de desarrollo (node.js u otro).
+2. 
    ![mail](assets/images/SELECCIONAR-TIPO-MAIL.png)
+   
    ![stack](assets/images/SELECCIONAR-STACK.png)
 2. **Configuración de Inbox:** Ve a "Sandboxes" -> "My sandbox".
+ 
    ![sandbox](assets/images/My-sandbox.png)
+   
 3. **Credenciales:** Selecciona SMTP y verás las credenciales `host`, `port`,`username` y `password`.
-   ![acceso](asstes/images/copiado-datos-acceso.png)
+   
+   ![acceso](asstes/images/Copiado-datos-acceso.png)
+   
 4. **Copiar Datos:** Copia el `user` y `pass` proporcionados en las variables `SMTP_USER` y `SMTP_PASS` de tu archivo `.env`.
 
 ## 4. 🔐 Seguridad (JWT)
