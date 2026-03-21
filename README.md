@@ -18,11 +18,11 @@ Este documento detalla los pasos necesarios para configurar las variables de ent
 ## 2. 💳 Pasarela de Pagos (Wompi)
 1. **Registro:** Ve a [Wompi.co](https://wompi.co/) y regístrate en el ambiente de **Sandbox** (Pruebas).
    
- ![registro wompi](assets/images/wompi 1.jpeg)
+ ![registro wompi](assets/images/wompi-1.jpeg)
  
 2. **Obtener Llaves:** Entra al "Dashboard" -> sección "Desarrolladores" -> "Configuración avanzada para programadores".
 
- ![Configuración](assets/images/wompi 2.jpeg)
+ ![Configuración](assets/images/wompi-2.jpeg)
  
 3. **Configuración:**
    - Copia la **Llave pública** en `WOMPI_PUBLIC_KEY`.
@@ -30,13 +30,14 @@ Este documento detalla los pasos necesarios para configurar las variables de ent
    - Genera y copia el **Secreto de integridad** en `WOMPI_INTEGRITY_SECRET` (necesario para validar transacciones).
    - Configura el **Secreto de eventos** si vas a usar Webhooks.
   
-  ![Llaves](assets/images/wompi 3.jpeg)
+  ![Llaves](assets/images/wompi-3.jpeg)
 
 ## 3. 📧 Servicio de Correo (Mailtrap)
-1. **Registro:** Ve a [Mailtrap.io](https://mailtrap.io/) y crea una cuenta gratuita.
-2. **Configuración de Inbox:** Ve a "Email Testing" -> "Inboxes" y crea uno nuevo.
-3. **Credenciales:** Selecciona el Inbox, busca la pestaña "SMTP Settings" y elige "Nodemailer" en la lista de integraciones.
-4. **Copiar Datos:** Copia el `user` y `pass` proporcionados en las variables `SMTP_USER` y `SMTP_PASS` de tu archivo `.env`.
+1. **Registro:** Ve a [Mailtrap.io](https://mailtrap.io/), crea una cuenta gratuita, selecciona el tipo de Mail (email sandbox) y el stack de desarrollo (node.js u otro).
+   ![mail](assets/images/
+3. **Configuración de Inbox:** Ve a "Email Testing" -> "Inboxes" y crea uno nuevo.
+4. **Credenciales:** Selecciona el Inbox, busca la pestaña "SMTP Settings" y elige "Nodemailer" en la lista de integraciones.
+5. **Copiar Datos:** Copia el `user` y `pass` proporcionados en las variables `SMTP_USER` y `SMTP_PASS` de tu archivo `.env`.
 
 ## 4. 🔐 Seguridad (JWT)
 1. Inventa dos cadenas de texto largas y aleatorias (puedes usar un generador de contraseñas).
