@@ -17,6 +17,7 @@ Este documento detalla los pasos necesarios para configurar las variables de ent
 
 ## 2. 💳 Pasarela de Pagos (Wompi)
 1. **Registro:** Ve a [Wompi.co](https://wompi.co/) y regístrate en el ambiente de **Sandbox** (Pruebas).
+ ![registro wompi](assets/images/wompi 1.jpeg) 
 2. **Obtener Llaves:** Entra al "Portal de Comercios" -> sección "Desarrolladores" -> "Llaves del comercio".
 3. **Configuración:**
    - Copia la **Llave pública** en `WOMPI_PUBLIC_KEY`.
