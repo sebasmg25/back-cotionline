@@ -17,13 +17,20 @@ Este documento detalla los pasos necesarios para configurar las variables de ent
 
 ## 2. 💳 Pasarela de Pagos (Wompi)
 1. **Registro:** Ve a [Wompi.co](https://wompi.co/) y regístrate en el ambiente de **Sandbox** (Pruebas).
- ![registro wompi](assets/images/wompi 1.jpeg) 
-2. **Obtener Llaves:** Entra al "Portal de Comercios" -> sección "Desarrolladores" -> "Llaves del comercio".
+   
+ ![registro wompi](assets/images/wompi 1.jpeg)
+ 
+2. **Obtener Llaves:** Entra al "Dashboard" -> sección "Desarrolladores" -> "Configuración avanzada para programadores".
+
+ ![Configuración](assets/images/wompi 2.jpeg)
+ 
 3. **Configuración:**
    - Copia la **Llave pública** en `WOMPI_PUBLIC_KEY`.
    - Copia la **Llave privada** en `WOMPI_PRIVATE_KEY`.
    - Genera y copia el **Secreto de integridad** en `WOMPI_INTEGRITY_SECRET` (necesario para validar transacciones).
    - Configura el **Secreto de eventos** si vas a usar Webhooks.
+  
+  ![Llaves](assets/images/wompi 3.jpeg)
 
 ## 3. 📧 Servicio de Correo (Mailtrap)
 1. **Registro:** Ve a [Mailtrap.io](https://mailtrap.io/) y crea una cuenta gratuita.
