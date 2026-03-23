@@ -1,17 +1,39 @@
-import 'reflect-metadata'; // Importante para TypeORM
+import 'reflect-metadata'; 
 import dotenv from 'dotenv';
 import { App } from './app';
-import { AppDataSource } from './config/database'; // Importar la configuración de la DB
-import { EnvConfig } from './infraestructure/env/EnvConfig'; // Importar la configuración de entorno
+import { AppDataSource } from './contexts/shared/infraestructure/config/database'; // Importar la configuración de la DB
+import { EnvConfig } from './contexts/shared/infraestructure/env/envConfig'; // Importar la configuración de entorno
 
-dotenv.config(); // Cargar variables de entorno
+import { TypeORMPlanRepository } from './contexts/subscription/infraestructure/persistance/typeorm/typeOrmPlanRepository';
+import { SeedPlansUseCase } from './contexts/subscription/useCases/seedPlans.useCase';
+
+
+
+dotenv.config(); 
 
 async function bootstrap() {
   try {
-    EnvConfig.load(); // Cargar configuración de entorno
+    EnvConfig.load(); 
+    console.log('✅ Llave pública cargada:', EnvConfig.get('WOMPI_PUBLIC_KEY'));
+
 
     await AppDataSource.initialize();
     console.log('Base de datos conectada correctamente!');
+
+    try {
+      const indexes = await AppDataSource.query("SHOW INDEXES FROM products WHERE Key_name != 'PRIMARY'");
+      for (const idx of indexes) {
+        if (idx.Column_name === 'name' && idx.Non_unique === 0) {
+          console.log('🚨 Eliminando índice único residual en products.name:', idx.Key_name);
+          await AppDataSource.query(`ALTER TABLE products DROP INDEX ${idx.Key_name}`);
+        }
+      }
+    } catch(e) { console.error('Error limpiando indices:', e); }
+
+
+    const planRepository = new TypeORMPlanRepository();
+    const seedPlansUseCase = new SeedPlansUseCase(planRepository);
+    await seedPlansUseCase.execute();
 
     const app = new App().getApp();
     const port = EnvConfig.get('PORT') || 3000;

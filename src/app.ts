@@ -1,6 +1,18 @@
 import express, { Application } from 'express';
-// Aquí importarías tus rutas
-// import { userRoutes } from './infrastructure/api/routes/userRoutes';
+import path from 'path';
+
+import cors from 'cors';
+import bodyParser from 'body-parser';
+
+import { userRoutes } from './apps/api/routes/user/userRoutes';
+import { businessRoutes } from './apps/api/routes/business/businessRoutes';
+import { quotationRequestRoutes } from './apps/api/routes/quotationRequest/quotationRequestRoutes';
+import { branchRoutes } from './apps/api/routes/branch/branchRoutes';
+import { productRoutes } from './apps/api/routes/product/productRoutes';
+import { quotationRoutes } from './apps/api/routes/quotation/quotationRoutes';
+import { collaboratorRoutes } from './apps/api/routes/collaborator/collaboratorRoutes';
+import { notificationRoutes } from './apps/api/routes/notification/notificationRoutes';
+import { subscriptionRoutes } from './apps/api/routes/subscription/planRoutes';
 
 export class App {
   private app: Application;
@@ -12,19 +24,32 @@ export class App {
   }
 
   private setupMiddlewares(): void {
-    this.app.use(express.json()); // Habilitar el parsing de JSON en las peticiones
-    // Otros middlewares como CORS, morgan para logging, etc.
+    this.app.use(cors());
+    this.app.use(express.json());
+    this.app.use(bodyParser.json());
+
+    this.app.use(
+      '/uploads',
+      express.static(path.join(process.cwd(), 'uploads')),
+    );
   }
 
   private setupRoutes(): void {
-    // Ejemplo de ruta de bienvenida
     this.app.get('/', (req, res) => {
       res.send(
-        '¡Bienvenido a mi API Backend con TypeScript, Express y TypeORM!'
+        '¡Bienvenido a mi API Backend con TypeScript, Express y TypeORM!',
       );
     });
 
-    // this.app.use('/users', userRoutes); // Descomenta cuando crees tus rutas de usuario
+    this.app.use('/users', userRoutes);
+    this.app.use('/businesses', businessRoutes);
+    this.app.use('/quotationRequests', quotationRequestRoutes);
+    this.app.use('/branches', branchRoutes);
+    this.app.use('/products', productRoutes);
+    this.app.use('/quotations', quotationRoutes);
+    this.app.use('/collaborators', collaboratorRoutes);
+    this.app.use('/notifications', notificationRoutes);
+    this.app.use('/subscriptions', subscriptionRoutes);
   }
 
   public getApp(): Application {

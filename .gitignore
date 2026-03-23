@@ -2,6 +2,8 @@
 node_modules/
 dist/
 .env
+coverage/
+uploads/
 
 # Archivos de log
 *.log
@@ -12,3 +14,7 @@ yarn-error.log*
 # Archivos de OS
 .DS_Store
 Thumbs.db
+
+# SonarQube y logs temporales
+.scannerwork/
+*.log
