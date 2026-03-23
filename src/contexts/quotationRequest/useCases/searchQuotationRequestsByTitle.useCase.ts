@@ -12,7 +12,6 @@ export class SearchQuotationRequestsByTitleUseCase {
 
     const effectiveOwnerId = userSession.ownerId || userSession.id;
 
-    // Sincronizar solo las del dueño real antes de buscar
     await this.quotationRequestRepository.updateExpiredStatus({
       userId: effectiveOwnerId,
     });

@@ -10,12 +10,6 @@ export class VerifyBusinessController {
       const { id } = req.params;
       const { status } = req.body;
 
-      // IMPORTANTE: Aquí podrías añadir una validación de Rol
-      // if (req.userSession!.role !== 'ADMIN') {
-      //   res.status(403).json({ message: 'No tienes permisos de administrador.' });
-      //   return;
-      // }
-
       const updatedBusiness = await this.verifyBusinessUseCase.execute(
         id,
         status,

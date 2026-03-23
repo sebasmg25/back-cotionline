@@ -7,7 +7,7 @@ export const updateBusinessValidationRules = oneOf(
     body('name').exists(),
     body('description').exists(),
     body('address').exists(),
-    // Agregamos una validación lógica: Si req.files existe, también es válido
+    
     body('isFileUpload').custom((value, { req }) => {
       return !!(
         req.files &&

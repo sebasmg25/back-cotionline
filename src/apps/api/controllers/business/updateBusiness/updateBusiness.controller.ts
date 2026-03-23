@@ -11,10 +11,10 @@ export class UpdateBusinessController {
       const { id } = req.params;
       const userId = req.userSession!.id;
 
-      // 1. Extraemos archivos de Multer
+
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-      // 2. Construimos el DTO combinando Body (texto) y Files (rutas)
+
       const updateData: UpdateBusinessRequest = {
         ...req.body,
         rutUrl: files?.['rut'] ? files['rut'][0].path : undefined,
@@ -23,7 +23,7 @@ export class UpdateBusinessController {
           : undefined,
       };
 
-      // 3. Ejecutamos el caso de uso
+
       const updatedBusiness = await this.updateBusinessUseCase.execute(
         id,
         updateData,
@@ -35,7 +35,7 @@ export class UpdateBusinessController {
         data: updatedBusiness,
       });
     } catch (error: any) {
-      // Manejo de errores (se mantienen tus validaciones)
+      
       const statusMap: Record<string, number> = {
         'El negocio que intentas actualizar no existe.': 404,
         'No tienes permiso para modificar este negocio.': 403,

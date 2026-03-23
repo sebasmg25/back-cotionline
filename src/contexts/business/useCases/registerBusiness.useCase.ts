@@ -21,7 +21,7 @@ export class RegisterBusinessUseCase {
       data.name,
       data.description,
       data.address,
-      userIdSession, // ID del token
+      userIdSession,
       BusinessStatus.PENDING,
       data.rutUrl,
       data.chamberOfCommerceUrl,

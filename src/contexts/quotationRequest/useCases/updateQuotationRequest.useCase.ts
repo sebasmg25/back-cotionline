@@ -19,7 +19,6 @@ export class UpdateQuotationRequestUseCase {
     const effectiveOwnerId = userSession.ownerId || userSession.id;
     const existing = await this.quotationRequestRepository.findById(id);
 
-    // Blindaje: Existencia y Propiedad
     if (!existing || existing.userId !== effectiveOwnerId) {
       throw new Error(
         'La solicitud de cotización no existe o no tienes permiso.',

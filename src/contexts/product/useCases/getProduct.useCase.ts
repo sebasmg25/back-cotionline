@@ -18,7 +18,6 @@ export class GetProductUseCase {
       throw new Error('Producto no encontrado.');
     }
 
-    // Blindaje: Validar propiedad a través de la cotización padre
     const quotationRequest = await this.quotationRequestRepository.findById(
       product.quotationRequestId,
     );

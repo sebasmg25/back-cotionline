@@ -1,5 +1,3 @@
-// contexts/subscription/interfaces/dtos/planResponse.dto.ts
-
 export interface PlanResponse {
   id: string;
   name: string;

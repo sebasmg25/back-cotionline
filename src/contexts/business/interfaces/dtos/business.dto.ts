@@ -5,7 +5,6 @@ export interface CreateBusinessRequest {
   name: string;
   description: string;
   address: string;
-  // Los archivos URLs y el status los maneja el sistema, no el cliente directamente
   rutUrl?: string;
   chamberOfCommerceUrl?: string;
 }

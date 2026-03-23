@@ -15,7 +15,6 @@ export class CompareQuotationsUseCase {
   ): Promise<{ cheaper: QuotationResponse; faster: QuotationResponse }> {
     const effectiveOwnerId = userSession.ownerId || userSession.id;
 
-    // BLINDAJE: ¿Esta solicitud le pertenece al usuario (o su empresa)?
     const request =
       await this.quotationRequestRepository.findById(quotationRequestId);
     if (!request || request.userId !== effectiveOwnerId) {

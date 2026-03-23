@@ -1,6 +1,5 @@
 import { User } from '../../domain/models/user.model';
 
-// Definimos una interfaz para el contrato de salida (lo que ve el Frontend)
 export interface UserResponse {
   id: string;
   identification: string;
@@ -33,7 +32,7 @@ export interface UpdateUserRequest {
 }
 
 export class UserResponseDto {
-  // A DTO: Entra el modelo de dominio -> Sale el contrato de respuesta limpio
+  
   static toDto(model: User): UserResponse {
     return {
       id: model.id || '',

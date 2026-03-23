@@ -33,7 +33,6 @@ export class DeleteBranchUseCase {
     const deleted = await this.branchRepository.delete(branchId);
     if (!deleted) throw new Error('Error al eliminar la sede.');
 
-    // Devolvemos el DTO de lo que acabamos de borrar
     return {
       id: branch.id!,
       name: branch.name,

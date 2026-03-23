@@ -8,13 +8,13 @@ export class CreateBusinessController {
 
   async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
-      // 1. Extraemos el ID del usuario directamente del Token
+
       const userId = req.userSession!.id;
 
-      // 2. Extraemos los campos de texto del body
+
       const { nit, name, description, address } = req.body;
 
-      // 3. Procesamos los archivos (Multer)
+
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
       const rutUrl = files?.['rut'] ? files['rut'][0].path : undefined;
@@ -22,7 +22,7 @@ export class CreateBusinessController {
         ? files['chamberOfCommerce'][0].path
         : undefined;
 
-      // 4. Construimos el objeto de petición siguiendo la interfaz CreateBusinessRequest
+
       const businessData: CreateBusinessRequest = {
         nit,
         name,
@@ -32,7 +32,7 @@ export class CreateBusinessController {
         chamberOfCommerceUrl,
       };
 
-      // 5. Ejecutamos el caso de uso pasando el ID de sesión seguro
+
       const savedBusiness = await this.registerBusinessUseCase.execute(
         businessData,
         userId,
@@ -43,7 +43,7 @@ export class CreateBusinessController {
         data: savedBusiness,
       });
     } catch (error: any) {
-      // Sincronización exacta con el mensaje del Use Case
+      
       if (error.message === 'Ya existe un negocio registrado con este nit') {
         res.status(409).json({ message: error.message });
         return;

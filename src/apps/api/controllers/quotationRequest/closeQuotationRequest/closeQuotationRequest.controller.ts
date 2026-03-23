@@ -13,7 +13,6 @@ export class CloseQuotationRequestController {
       const { selectedOfferId } = req.body;
       const userIdSession = req.userSession!.id;
 
-      // Ejecutamos el caso de uso con el blindaje de sesión
       await this.closeQuotationRequestUseCase.execute(
         id,
         userIdSession,
@@ -27,13 +26,13 @@ export class CloseQuotationRequestController {
     } catch (error: any) {
       const errorMessage = error.message.toLowerCase();
 
-      // 1. Error de Seguridad - Forbidden (403)
+
       if (errorMessage.includes('no tienes permiso')) {
         res.status(403).json({ message: error.message });
         return;
       }
 
-      // 2. Errores de existencia (404)
+
       if (
         errorMessage.includes('no encontrada') ||
         errorMessage.includes('no existe')
@@ -42,7 +41,7 @@ export class CloseQuotationRequestController {
         return;
       }
 
-      // 3. Errores de lógica de negocio o validación cruzada (400)
+
       if (
         errorMessage.includes('expirado') ||
         errorMessage.includes('cerrada') ||
@@ -52,7 +51,7 @@ export class CloseQuotationRequestController {
         return;
       }
 
-      // 4. Error técnico inesperado (500)
+
       console.error('[CloseQuotationRequestController] Error:', error);
       res.status(500).json({
         message: 'Error interno al procesar el cierre de la solicitud.',

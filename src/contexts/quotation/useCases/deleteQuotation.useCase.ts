@@ -14,7 +14,6 @@ export class DeleteQuotationUseCase {
 
     if (!quotation) throw new Error('Cotización no encontrada');
 
-    // BLINDAJE: ¿Es el autor de la cotización (o su empresa)?
     if (quotation.userId !== effectiveOwnerId) {
       throw new Error('No tienes permiso para eliminar esta cotización.');
     }

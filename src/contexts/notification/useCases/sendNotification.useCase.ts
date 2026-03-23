@@ -13,7 +13,7 @@ export class SendNotificationUseCase {
     title: string,
     message: string,
     link: string,
-    targetUserId: string, // El usuario que recibirá la notificación
+    targetUserId: string,
   ): Promise<NotificationResponse> {
     const notification = new Notification(
       type,

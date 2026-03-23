@@ -8,12 +8,12 @@ export class CreateBranchController {
 
   async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
-      // Tomamos el ID del token (JwtVerifier ya aseguró que existe si llegó aquí)
+      
       const userId = req.userSession!.id;
 
       const branchData: CreateBranchRequest = req.body;
 
-      // Pasamos los datos del body Y el ID de la sesión por separado
+      
       const savedBranch = await this.createBranchUseCase.execute(
         branchData,
         userId,
@@ -24,7 +24,7 @@ export class CreateBranchController {
         data: savedBranch,
       });
     } catch (error: any) {
-      // Errores de Negocio/Seguridad
+      
       if (
         error.message === 'No tienes permiso para agregar sedes a este negocio.'
       ) {

@@ -26,7 +26,7 @@ export class CreateQuotationUseCase {
   ): Promise<QuotationResponse> {
     const effectiveOwnerId = userSession.ownerId || userSession.id;
 
-    // 1. Validar Usuario y Plan (Límites de proveedor)
+
     const user = await this.userRepository.findById(effectiveOwnerId);
     if (!user || !user.planId) throw new Error('Usuario o plan no encontrado');
 
@@ -43,7 +43,7 @@ export class CreateQuotationUseCase {
       throw new Error('Has alcanzado el límite de cotizaciones para tu plan');
     }
 
-    // 2. Validar existencia de la solicitud y duplicidad
+
     const request = await this.quotationRequestRepository.findById(
       data.quotationRequestId,
     );
@@ -59,7 +59,7 @@ export class CreateQuotationUseCase {
         'Usted ya ha enviado una cotización para esta solicitud.',
       );
 
-    // 3. Crear y Guardar
+
     const newQuotation = new Quotation(
       data.responseDeadline,
       data.quotationRequestId,
@@ -73,14 +73,14 @@ export class CreateQuotationUseCase {
 
     const saved = await this.quotationRepository.save(newQuotation);
 
-    // 4. Actualizar el estado de la Solicitud si estaba PENDIENTE
+
     if (request.status === 'PENDING') {
       await this.quotationRequestRepository.update(data.quotationRequestId, {
-        status: QuotationRequestStatus.QUOTED, // Dependiendo del enum exportado en backend
+        status: QuotationRequestStatus.QUOTED,
       });
     }
 
-    // 5. Notificar al dueño de la solicitud (request.userId)
+
     await this.sendNotificationUseCase.execute(
       NotificationType.TRANSACTIONAL,
       'Nueva Cotización',

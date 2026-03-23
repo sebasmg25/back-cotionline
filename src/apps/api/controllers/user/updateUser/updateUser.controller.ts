@@ -18,7 +18,7 @@ export class UpdateUserController {
       const updateData: UpdateUserRequest = {
         name: req.body.name,
         lastName: req.body.lastName,
-        department: req.body.department, // Campo capturado
+        department: req.body.department, 
         city: req.body.city,
         password: req.body.password,
       };
@@ -40,7 +40,6 @@ export class UpdateUserController {
         return;
       }
 
-      // Añadimos el blindaje para errores geográficos
       if (
         errorMessage.includes('No se detectaron cambios') ||
         errorMessage.includes('igual a la anterior') ||

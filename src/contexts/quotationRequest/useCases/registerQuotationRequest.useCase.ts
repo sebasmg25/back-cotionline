@@ -21,7 +21,7 @@ export class RegisterQuotationRequestUseCase {
     dto: CreateQuotationRequestDto,
     userSession: { id: string; role: string; ownerId?: string },
   ): Promise<QuotationRequestResponse> {
-    // 1. Determinar el ID del dueño real (si es colaborador, usamos ownerId)
+
     const effectiveOwnerId = userSession.ownerId || userSession.id;
 
     const user = await this.userRepository.findById(effectiveOwnerId);
@@ -42,7 +42,6 @@ export class RegisterQuotationRequestUseCase {
 
     const finalDeadline = new Date(dto.responseDeadline);
 
-    // CORRECCIÓN: Ahora toma el status del DTO si existe, sino DRAFT
     const quotationRequest = new QuotationRequest(
       dto.title,
       dto.description || '',

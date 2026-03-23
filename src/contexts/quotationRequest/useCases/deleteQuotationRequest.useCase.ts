@@ -17,7 +17,6 @@ export class DeleteQuotationRequestUseCase {
       );
     }
 
-    // 🛡️ Blindaje de propiedad
     if (existRequest.userId !== effectiveOwnerId) {
       throw new Error('No tienes permiso para eliminar esta solicitud.');
     }

@@ -6,7 +6,7 @@ export class GetAllPlansController {
 
   async handle(req: Request, res: Response): Promise<void> {
     try {
-      // Este caso de uso ya devuelve los datos ordenados y mapeados a DTO
+      
       const plans = await this.getAllPlansUseCase.execute();
 
       res.status(200).json({

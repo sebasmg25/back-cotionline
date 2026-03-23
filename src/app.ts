@@ -1,5 +1,6 @@
 import express, { Application } from 'express';
-import path from 'path'; // 1. Importante para manejar rutas de carpetas
+import path from 'path';
+
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
@@ -27,8 +28,6 @@ export class App {
     this.app.use(express.json());
     this.app.use(bodyParser.json());
 
-    // 2. HACER PÚBLICA LA CARPETA UPLOADS
-    // Esto permite que si entras a http://localhost:3000/uploads/archivo.pdf, el navegador lo abra.
     this.app.use(
       '/uploads',
       express.static(path.join(process.cwd(), 'uploads')),

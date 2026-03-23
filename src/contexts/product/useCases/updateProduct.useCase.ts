@@ -24,7 +24,6 @@ export class UpdateProductUseCase {
       throw new Error('El producto que intentas actualizar no existe');
     }
 
-    // Blindaje: Validar propiedad
     const quotationRequest = await this.quotationRequestRepository.findById(
       existProduct.quotationRequestId,
     );

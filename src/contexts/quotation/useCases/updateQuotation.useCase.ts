@@ -20,7 +20,6 @@ export class UpdateQuotationUseCase {
     if (!existQuotation)
       throw new Error('La cotización que intentas actualizar no existe');
 
-    // Blindaje: ¿Es el proveedor dueño de esta oferta (o su empresa)?
     if (existQuotation.userId !== effectiveOwnerId) {
       throw new Error('No tienes permiso para editar esta cotización.');
     }
@@ -28,7 +27,6 @@ export class UpdateQuotationUseCase {
     const updateFields: QuotationUpdateFields = {};
     let hasChanges = false;
 
-    // Validación de fechas y cambios
     if (
       data.responseDeadline &&
       data.responseDeadline.getTime() !==

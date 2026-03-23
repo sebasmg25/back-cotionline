@@ -9,10 +9,8 @@ export class DeleteCollaboratorController {
     try {
       const { id } = req.params;
 
-      // Extraemos el ID del usuario de la sesión para el blindaje
       const userIdSession = req.userSession!.id;
 
-      // Pasamos ambos IDs al caso de uso
       const deletedCollaborator = await this.deleteCollaboratorUseCase.execute(
         id,
         userIdSession,
@@ -23,19 +21,19 @@ export class DeleteCollaboratorController {
         data: deletedCollaborator,
       });
     } catch (error: any) {
-      // 1. No encontrado (404)
+
       if (error.message.includes('no encontrado')) {
         res.status(404).json({ message: error.message });
         return;
       }
 
-      // 2. Error de permisos (403 Forbidden)
+
       if (error.message.includes('No tienes permiso')) {
         res.status(403).json({ message: error.message });
         return;
       }
 
-      // 3. Error técnico
+
       console.error('[DeleteCollaboratorController] Error:', error);
       res.status(500).json({ message: 'Error interno del servidor.' });
     }

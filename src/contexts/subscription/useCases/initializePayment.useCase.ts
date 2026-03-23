@@ -19,19 +19,19 @@ export class InitializePaymentUseCase {
     userId: string,
     planId: string,
   ): Promise<PaymentInitializationResponse> {
-    // 1. Validar existencia del plan
+
     const plan = await this.planRepository.findById(planId);
     if (!plan) {
       throw new Error('El plan seleccionado no existe.');
     }
 
-    // 2. Preparar datos técnicos
+
     const transactionId = uuidv4();
     const amountInCents = plan.price * 100;
     const currency = 'COP';
     const integritySecret = EnvConfig.get('WOMPI_INTEGRITY_SECRET');
 
-    // 3. Generar firma de seguridad (Blindaje contra manipulación de montos)
+
     const signature = WompiSignatureService.generateIntegritySignature(
       transactionId,
       amountInCents,
@@ -39,7 +39,7 @@ export class InitializePaymentUseCase {
       integritySecret,
     );
 
-    // 4. Persistir intención de pago
+
     const newTransaction = new PaymentTransaction(
       transactionId,
       userId,
@@ -50,7 +50,7 @@ export class InitializePaymentUseCase {
 
     await this.transactionRepository.save(newTransaction);
 
-    // 5. Retornar DTO exacto para el Widget
+
     return {
       reference: transactionId,
       amountInCents,

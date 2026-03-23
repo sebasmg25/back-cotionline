@@ -14,9 +14,6 @@ export class TypeORMCollaboratorRepository implements CollaboratorRepository {
     this.ormRepository = AppDataSource.getRepository(CollaboratorEntity);
   }
 
-  /**
-   * MÉTODO MAPPER: Transforma la entidad de BD al modelo de Dominio.
-   */
   private mapToDomain(entity: CollaboratorEntity): Collaborator {
     return new Collaborator(
       entity.email,

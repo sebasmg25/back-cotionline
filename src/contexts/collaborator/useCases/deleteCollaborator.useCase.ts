@@ -13,7 +13,6 @@ export class DeleteCollaboratorUseCase {
 
     if (!collaborator) throw new Error('Colaborador no encontrado.');
 
-    // SEGURIDAD: Solo el dueño que lo creó puede eliminarlo
     if (collaborator.userId !== userIdSession) {
       throw new Error('No tienes permiso para eliminar este colaborador.');
     }

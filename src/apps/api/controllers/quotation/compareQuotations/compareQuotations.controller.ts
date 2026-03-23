@@ -21,13 +21,13 @@ export class CompareQuotationsController {
         data: result,
       });
     } catch (error: any) {
-      // 1. Error de permisos (403) - Intento de espionaje o acceso no autorizado
+
       if (error.message.includes('No tienes permiso')) {
         res.status(403).json({ message: error.message });
         return;
       }
 
-      // 2. Error de negocio: No hay datos para comparar (404)
+
       if (
         error.message.includes('No hay cotizaciones') ||
         error.message.includes('no existe')
@@ -36,7 +36,7 @@ export class CompareQuotationsController {
         return;
       }
 
-      // 3. Error técnico inesperado
+
       console.error('[CompareQuotationsController] Error:', error);
       res.status(500).json({
         message: 'Error interno al procesar la comparación',

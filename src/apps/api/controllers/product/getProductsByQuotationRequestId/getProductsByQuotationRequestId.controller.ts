@@ -21,13 +21,13 @@ export class GetProductsByQuotationRequestIdController {
         data: products,
       });
     } catch (error: any) {
-      // 1. Error de permisos (403)
+
       if (error.message.includes('No tienes permiso')) {
         res.status(403).json({ message: error.message });
         return;
       }
 
-      // 2. No encontrado (404)
+
       if (error.message.includes('no existe')) {
         res.status(404).json({ message: error.message });
         return;

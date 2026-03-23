@@ -17,10 +17,6 @@ export class TypeORMBusinessRepository implements BusinessRepository {
     this.ormRepository = AppDataSource.getRepository(BusinessEntity);
   }
 
-  /**
-   * MÉTODO MAPPER: Centraliza la lógica de conversión.
-   * Si mañana cambias el orden del constructor en Business.ts, solo tocas aquí.
-   */
   private mapToDomain(entity: BusinessEntity): Business {
     return new Business(
       entity.nit,

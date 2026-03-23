@@ -22,7 +22,7 @@ export const createUserValidationRules = [
     .matches(/[!@#$%^&*]/)
     .withMessage('Debe contener al menos un caracter especial.'),
 
-  body('department') // Nuevo campo
+  body('department') 
     .trim()
     .notEmpty()
     .withMessage('El campo departamento es requerido.'),

@@ -20,15 +20,13 @@ export class BusinessStatusValidator {
           effectiveOwnerId,
         );
 
-      // Caso 1: Ni siquiera ha registrado el negocio
       if (!business) {
         return res.status(403).json({
           message: 'Debes registrar tu negocio para realizar esta acción.',
           code: 'NO_BUSINESS_REGISTERED',
         });
       }
-
-      // Caso 2: El negocio existe pero no está verificado
+      
       if (business.status !== BusinessStatus.VERIFIED) {
         return res.status(403).json({
           message:
@@ -38,7 +36,6 @@ export class BusinessStatusValidator {
         });
       }
 
-      // Caso 3: Todo OK
       next();
     } catch (error) {
       return res

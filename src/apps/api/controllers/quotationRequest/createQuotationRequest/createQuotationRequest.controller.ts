@@ -23,7 +23,7 @@ export class CreateQuotationRequestController {
     } catch (error: any) {
       const errorMessage = error.message.toLowerCase();
 
-      // 1. Error de Límites de Suscripción (403)
+
       if (errorMessage.includes('límite') || errorMessage.includes('limite')) {
         res.status(403).json({
           message: error.message,
@@ -32,7 +32,7 @@ export class CreateQuotationRequestController {
         return;
       }
 
-      // 2. Errores de existencia (404)
+
       if (
         errorMessage.includes('no encontrado') ||
         errorMessage.includes('no existe')
@@ -41,7 +41,7 @@ export class CreateQuotationRequestController {
         return;
       }
 
-      // 3. Errores de configuración o datos inválidos (400)
+
       if (
         errorMessage.includes('determinar') ||
         errorMessage.includes('asignado')

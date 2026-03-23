@@ -5,14 +5,14 @@ import { QuotationRequestRepository } from '../../quotationRequest/domain/reposi
 export class GetProductsByQuotationRequestIdUseCase {
   constructor(
     private productRepository: ProductRepository,
-    private quotationRequestRepository: QuotationRequestRepository, // Inyección necesaria
+    private quotationRequestRepository: QuotationRequestRepository,
   ) {}
 
   async execute(
     quotationRequestId: string,
     userSessionId: string,
   ): Promise<ProductResponse[]> {
-    // 1. Blindaje: Verificar que la cotización existe y es del usuario
+
     const quotationRequest =
       await this.quotationRequestRepository.findById(quotationRequestId);
 
@@ -26,13 +26,13 @@ export class GetProductsByQuotationRequestIdUseCase {
       );
     }
 
-    // 2. Si es el dueño, obtenemos los productos
+
     const products =
       await this.productRepository.findProductsByQuotationRequestId(
         quotationRequestId,
       );
 
-    // 3. Mapeo a DTOs
+
     return products.map((p) => ({
       id: p.id!,
       name: p.name,

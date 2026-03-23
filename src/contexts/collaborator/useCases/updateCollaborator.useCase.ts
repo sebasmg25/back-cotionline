@@ -18,7 +18,6 @@ export class UpdateCollaboratorUseCase {
       throw new Error('El colaborador que intentas actualizar no existe');
     }
 
-    // SEGURIDAD: Solo el dueño puede editarlo
     if (existCollaborator.userId !== userIdSession) {
       throw new Error('No tienes permiso para modificar este colaborador.');
     }

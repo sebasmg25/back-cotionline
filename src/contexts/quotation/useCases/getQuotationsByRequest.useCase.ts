@@ -14,7 +14,6 @@ export class GetQuotationsByRequestUseCase {
   ): Promise<QuotationResponse[]> {
     const effectiveOwnerId = userSession.ownerId || userSession.id;
 
-    // Validamos que el usuario logueado (o su empresa) sea el dueño de la solicitud padre
     const request =
       await this.quotationRequestRepository.findById(quotationRequestId);
 

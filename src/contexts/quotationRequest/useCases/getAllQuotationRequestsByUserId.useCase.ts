@@ -11,7 +11,6 @@ export class GetAllQuotationRequestsByUserIdUseCase {
   }): Promise<QuotationRequestResponse[]> {
     const effectiveOwnerId = userSession.ownerId || userSession.id;
 
-    // Sincronizamos todas las del dueño real
     await this.quotationRequestRepository.updateExpiredStatus({
       userId: effectiveOwnerId,
     });

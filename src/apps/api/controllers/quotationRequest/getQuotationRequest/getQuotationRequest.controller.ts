@@ -25,13 +25,13 @@ export class GetQuotationRequestController {
   res.status(403).json({ message: error.message });
   return;
 }
-      // 1. Manejo de existencia/propiedad (404)
+
       if (error.message.toLowerCase().includes('no encontrada')) {
         res.status(404).json({ message: error.message });
         return;
       }
 
-      // 2. Error técnico
+
       console.error('[GetQuotationRequestController] Error:', error);
       res.status(500).json({ message: 'Error interno del servidor.' });
     }

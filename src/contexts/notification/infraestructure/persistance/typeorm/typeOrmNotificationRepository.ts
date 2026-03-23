@@ -11,9 +11,6 @@ export class TypeORMNotificationRepository implements NotificationRepository {
     this.ormRepository = AppDataSource.getRepository(NotificationEntity);
   }
 
-  /**
-   * MÉTODO MAPPER: Centraliza la conversión para objetos únicos y colecciones.
-   */
   private mapToDomain(entity: NotificationEntity): Notification {
     return new Notification(
       entity.type,
@@ -39,7 +36,6 @@ export class TypeORMNotificationRepository implements NotificationRepository {
       order: { createdAt: 'DESC' },
     });
 
-    // Transformación limpia de toda la lista
     return entities.map((entity) => this.mapToDomain(entity));
   }
 

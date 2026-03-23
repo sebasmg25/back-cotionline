@@ -25,7 +25,7 @@ export class RegisterUserUseCase {
   async execute(
     request: CreateUserRequest,
   ): Promise<{ user: UserResponse; token: string }> {
-    // 1. Validaciones de duplicidad usando el objeto request directamente
+
     const existIdentification = await this.userRepository.findByIdentification(
       request.identification,
     );
@@ -64,8 +64,7 @@ export class RegisterUserUseCase {
       ownerId = collaboratorInfo.userId;
     }
 
-    // 2. Asignación automática de Plan (Regla de negocio)
-    // Solo para Dueños, los colaboradores no tienen plan propio (usan el del dueño)
+
     let planId: string | undefined = undefined;
     if (role === UserRole.OWNER) {
       const defaultPlan = await this.planRepository.findByName(PlanName.FREE);
@@ -75,10 +74,10 @@ export class RegisterUserUseCase {
       planId = defaultPlan.id;
     }
 
-    // 3. Transformación: Hasheamos el password que viene en el DTO
+
     const hashedPassword = await this.passwordHasher.hash(request.password);
 
-    // 4. Creación del modelo de dominio usando los campos del request
+
     const userToSave = new User(
       request.identification,
       request.name,
@@ -87,7 +86,7 @@ export class RegisterUserUseCase {
       hashedPassword,
       request.department,
       request.city,
-      undefined, // El ID lo generará la base de datos
+      undefined, 
       planId,
       role === UserRole.OWNER ? new Date() : undefined,
       role,
@@ -96,7 +95,7 @@ export class RegisterUserUseCase {
 
     const savedUser = await this.userRepository.save(userToSave);
 
-    // 5. Generación de Token de sesión inicial
+
     const token = this.tokenGenerator.generateToken({
       id: savedUser.id!,
       identification: savedUser.identification,
@@ -111,7 +110,7 @@ export class RegisterUserUseCase {
       ownerId: savedUser.ownerId,
     });
 
-    // 6. Retorno mediante DTO de salida
+
     return {
       user: UserResponseDto.toDto(savedUser),
       token,

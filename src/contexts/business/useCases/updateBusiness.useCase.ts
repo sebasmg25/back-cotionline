@@ -25,7 +25,6 @@ export class UpdateBusinessUseCase {
 
     const updateFields: BusinessUpdateFields = {};
 
-    // Validación de NIT duplicado solo si cambia
     if (data.nit && data.nit !== existBusiness.nit) {
       const existNit = await this.businessRepository.findByNit(data.nit);
       if (existNit)
@@ -33,17 +32,13 @@ export class UpdateBusinessUseCase {
       updateFields.nit = data.nit;
     }
 
-    // Mapeo de campos de texto
     if (data.name) updateFields.name = data.name;
     if (data.description) updateFields.description = data.description;
     if (data.address) updateFields.address = data.address;
 
-    // Mapeo de archivos (URLs generadas por Multer)
     if (data.rutUrl) updateFields.rutUrl = data.rutUrl;
     if (data.chamberOfCommerceUrl)
       updateFields.chamberOfCommerceUrl = data.chamberOfCommerceUrl;
-
-    // Verificamos si realmente hay algo que actualizar
     if (Object.keys(updateFields).length === 0) {
       throw new Error('No se detectaron cambios en los campos enviados.');
     }

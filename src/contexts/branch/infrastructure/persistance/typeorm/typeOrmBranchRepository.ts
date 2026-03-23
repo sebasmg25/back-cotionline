@@ -14,16 +14,13 @@ export class TypeORMBranchRepository implements BranchRepository {
     this.ormRepository = AppDataSource.getRepository(BranchEntity);
   }
 
-  /**
-   * MÉTODO MAPPER: Centraliza la conversión de Entity a Domain
-   */
   private mapToDomain(entity: BranchEntity): Branch {
     return new Branch(
       entity.name,
       entity.address,
       entity.city,
       entity.businessId,
-      entity.id, // ID siempre al final según tu constructor
+      entity.id, 
     );
   }
 

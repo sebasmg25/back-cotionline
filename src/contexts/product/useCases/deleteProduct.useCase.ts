@@ -18,7 +18,6 @@ export class DeleteProductUseCase {
       throw new Error('Producto no encontrado.');
     }
 
-    // Blindaje: Validar propiedad
     const quotationRequest = await this.quotationRequestRepository.findById(
       existProduct.quotationRequestId,
     );

@@ -10,7 +10,6 @@ export class CreateQuotationController {
       const { quotationRequestId } = req.params;
       const userSession = req.userSession!;
 
-      // Unificamos el ID de la URL con el body para cumplir con el DTO
       const savedQuotation = await this.createQuotationUseCase.execute(
         { ...req.body, quotationRequestId },
         userSession,
@@ -23,7 +22,7 @@ export class CreateQuotationController {
     } catch (error: any) {
       const message = error.message;
 
-      // 1. Límites de Plan (403)
+
       if (message.includes('límite')) {
         res.status(403).json({
           message,
@@ -32,19 +31,19 @@ export class CreateQuotationController {
         return;
       }
 
-      // 2. Duplicidad (409)
+
       if (message.includes('ya ha enviado')) {
         res.status(409).json({ message });
         return;
       }
 
-      // 3. Recursos no encontrados (404)
+
       if (message.includes('no existe') || message.includes('no encontrado')) {
         res.status(404).json({ message });
         return;
       }
 
-      // 4. Errores de configuración de usuario/plan (400)
+
       if (message.includes('asignado') || message.includes('determinar')) {
         res.status(400).json({ message });
         return;

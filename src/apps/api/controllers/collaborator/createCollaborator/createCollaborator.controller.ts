@@ -23,7 +23,7 @@ export class CreateCollaboratorController {
         data: savedCollaborator,
       });
     } catch (error: any) {
-      // 1. Límites de Plan (403 Forbidden)
+
       if (error.message.includes('limite')) {
         res.status(403).json({
           message: error.message,
@@ -32,19 +32,19 @@ export class CreateCollaboratorController {
         return;
       }
 
-      // 2. Conflicto de Email (409 Conflict)
+
       if (error.message.includes('Ya existe')) {
         res.status(409).json({ message: error.message });
         return;
       }
 
-      // 3. No encontrado (404)
+
       if (error.message.includes('no encontrado')) {
         res.status(404).json({ message: error.message });
         return;
       }
 
-      // 4. Errores de Configuración/Suscripción (400)
+
       if (
         error.message.includes('plan asignado') ||
         error.message.includes('determinar')

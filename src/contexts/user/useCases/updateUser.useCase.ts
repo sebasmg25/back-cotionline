@@ -20,14 +20,14 @@ export class UpdateUserUseCase {
     userIdSession: string,
     request: UpdateUserRequest,
   ): Promise<UserResponse> {
-    // 1. Blindaje de existencia
+
     const existingUser = await this.userRepository.findById(userIdSession);
     if (!existingUser) throw new Error('El usuario no existe.');
 
     const updateFields: UserUpdateFields = {};
     let hasChanges = false;
 
-    // 2. Mapeo de campos básicos
+
     if (request.name && request.name !== existingUser.name) {
       updateFields.name = request.name;
       hasChanges = true;
@@ -37,11 +37,9 @@ export class UpdateUserUseCase {
       hasChanges = true;
     }
 
-    // --- NUEVA LÓGICA: Validación Geográfica Dinámica ---
     const newDept = request.department || existingUser.department;
     const newCity = request.city || existingUser.city;
 
-    // Si hubo algún intento de cambio en ubicación, validamos coherencia
     if (request.department || request.city) {
       const citiesInDept = COLOMBIAN_DATA[newDept];
 
@@ -55,7 +53,6 @@ export class UpdateUserUseCase {
         );
       }
 
-      // Asignamos si son diferentes a lo que ya existe
       if (
         request.department &&
         request.department !== existingUser.department
@@ -68,9 +65,7 @@ export class UpdateUserUseCase {
         hasChanges = true;
       }
     }
-    // ----------------------------------------------------
 
-    // 3. Lógica de Password segura
     if (request.password && request.password.trim() !== '') {
       const isSamePassword = await this.passwordHasher.compare(
         request.password,
@@ -87,7 +82,7 @@ export class UpdateUserUseCase {
       hasChanges = true;
     }
 
-    // 4. Blindaje de cambios
+
     if (!hasChanges) {
       throw new Error('No se detectaron cambios para actualizar.');
     }
@@ -100,7 +95,7 @@ export class UpdateUserUseCase {
     if (!updatedUser)
       throw new Error('Error crítico al actualizar el usuario.');
 
-    // 5. Retorno seguro mediante DTO de salida
+
     return UserResponseDto.toDto(updatedUser);
   }
 }

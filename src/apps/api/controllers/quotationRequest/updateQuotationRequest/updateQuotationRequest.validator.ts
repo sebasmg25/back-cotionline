@@ -24,7 +24,6 @@ export const updateQuotationRequestValidationRules = [
     .optional()
     .trim(),
 
-  // Validación para asegurar que al menos uno de los campos permitidos esté presente
   body().custom((value, { req }) => {
     const { title, responseDeadline, branch, description } = req.body;
     if (!title && !responseDeadline && !branch && !description) {

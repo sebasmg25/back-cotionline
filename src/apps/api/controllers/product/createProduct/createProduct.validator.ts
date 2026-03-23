@@ -1,7 +1,6 @@
 import { body, param } from 'express-validator';
 
 export const createProductValidationRules = [
-  // Validamos que el ID de la cotización en la URL sea un UUID válido
   param('quotationRequestId')
     .isUUID()
     .withMessage('El ID de la solicitud de cotización no es válido.'),

@@ -14,9 +14,6 @@ export class TypeORMPaymentTransactionRepository implements PaymentTransactionRe
     this.ormRepository = AppDataSource.getRepository(PaymentTransactionEntity);
   }
 
-  /**
-   * MÉTODO MAPPER: Centraliza la conversión de la entidad de BD al modelo de Dominio.
-   */
   private mapToDomain(entity: PaymentTransactionEntity): PaymentTransaction {
     return new PaymentTransaction(
       entity.id,
@@ -24,7 +21,7 @@ export class TypeORMPaymentTransactionRepository implements PaymentTransactionRe
       entity.planId,
       entity.amount,
       entity.status as PaymentStatus,
-      entity.wompiId ?? undefined, // Aseguramos que null se convierta en undefined si es necesario
+      entity.wompiId ?? undefined,
       entity.createdAt,
     );
   }
@@ -42,7 +39,7 @@ export class TypeORMPaymentTransactionRepository implements PaymentTransactionRe
 
   async updateStatus(
     id: string,
-    status: PaymentStatus, // Cambiado a PaymentStatus para mayor seguridad de tipos
+    status: PaymentStatus,
     wompiId?: string,
   ): Promise<void> {
     const updateData: Partial<PaymentTransactionEntity> = { status };

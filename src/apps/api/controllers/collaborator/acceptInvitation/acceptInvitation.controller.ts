@@ -15,19 +15,19 @@ export class AcceptInvitationController {
         data: collaborator,
       });
     } catch (error: any) {
-      // 1. No encontrada (404)
+
       if (error.message.includes('no encontrada')) {
         res.status(404).json({ message: error.message });
         return;
       }
 
-      // 2. Ya procesada (409 Conflict)
+
       if (error.message.includes('ya ha sido aceptada')) {
         res.status(409).json({ message: error.message });
         return;
       }
 
-      // 3. Error de persistencia (500)
+
       if (error.message.includes('No se pudo actualizar')) {
         res.status(500).json({ message: error.message });
         return;

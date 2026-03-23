@@ -5,7 +5,6 @@ export const updateQuotationValidationRules = [
     .isUUID()
     .withMessage('El ID de la cotización debe ser un UUID válido.'),
 
-  // Validar que al menos un campo venga en el body
   body().custom((value, { req }) => {
     const { responseDeadline, price, deliveryTime, description, status } = req.body;
     if (!responseDeadline && !price && !deliveryTime && !description && !status) {

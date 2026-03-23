@@ -22,13 +22,13 @@ export class GetQuotationRequestUseCase {
   ): Promise<QuotationRequestResponse> {
     const effectiveOwnerId = userSession.ownerId || userSession.id;
 
-    // 1. Sincronización proactiva antes de la lectura
+
     await this.quotationRequestRepository.updateExpiredStatus({
       id: quotationRequestId,
       userId: effectiveOwnerId,
     });
 
-    // 2. Búsqueda y blindaje de propiedad
+
     const request =
       await this.quotationRequestRepository.findById(quotationRequestId);
 
@@ -43,7 +43,6 @@ export class GetQuotationRequestUseCase {
     let isProviderForThisRequest = false;
 
     if (!isOwner && !isPublic) {
-      // Si no es público y no es el dueño, verifiquemos si el usuario (o su empresa) envió una cotización para esta solicitud
       const userQuotation =
         await this.quotationRepository.findByUserAndQuotationRequest(
           effectiveOwnerId,

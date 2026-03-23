@@ -1,4 +1,3 @@
-// src/infrastructure/env/EnvConfig.ts
 import dotenv from 'dotenv';
 
 export class EnvConfig {

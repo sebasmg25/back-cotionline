@@ -17,7 +17,6 @@ export class GetAllQuotationsByUserIdUseCase {
     const quotations =
       await this.quotationRepository.findAllByUserId(effectiveOwnerId);
 
-    // Complementamos con información de la solicitud (como el título)
     const detailedQuotations = await Promise.all(
       quotations.map(async (q) => {
         const request = await this.quotationRequestRepository.findById(
@@ -26,7 +25,7 @@ export class GetAllQuotationsByUserIdUseCase {
         return {
           ...this.mapToResponse(q),
           requestTitle: request?.title || 'Solicitud sin título',
-          createdAt: (q as any).issueDate, // Usamos issueDate como createdAt
+          createdAt: (q as any).issueDate,
         };
       }),
     );

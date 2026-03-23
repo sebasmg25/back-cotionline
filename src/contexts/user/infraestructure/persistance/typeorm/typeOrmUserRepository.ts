@@ -14,10 +14,6 @@ export class TypeORMUserRepository implements UserRepository {
     this.ormRepository = AppDataSource.getRepository(UserEntity);
   }
 
-  /**
-   * MÉTODO MAPPER: Centraliza la creación del modelo de dominio.
-   * Maneja la conversión de fechas y campos opcionales en un solo lugar.
-   */
   private mapToDomain(entity: UserEntity): User {
     return new User(
       entity.identification,

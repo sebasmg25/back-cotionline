@@ -7,7 +7,6 @@ export class GetActiveCollaboratorsUseCase {
   async execute(ownerId: string): Promise<Omit<User, 'password'>[]> {
     const collaborators = await this.userRepository.findCollaboratorsByOwnerId(ownerId);
     
-    // Devolvemos los usuarios omitiendo siempre el hash de la contraseña
     return collaborators.map((c) => {
       const { password, ...safeUser } = c;
       return safeUser as Omit<User, 'password'>;

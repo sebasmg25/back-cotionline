@@ -16,7 +16,7 @@ export class CreateProductUseCase {
     data: CreateProductRequest,
     userSessionId: string,
   ): Promise<ProductResponse> {
-    // 1. Validar que la solicitud de cotización existe
+
     const quotationRequest = await this.quotationRequestRepository.findById(
       data.quotationRequestId,
     );
@@ -25,14 +25,14 @@ export class CreateProductUseCase {
       throw new Error('La solicitud de cotización especificada no existe.');
     }
 
-    // 2. Blindaje de seguridad: Comparar dueños
+
     if (quotationRequest.userId !== userSessionId) {
       throw new Error(
         'No tienes permiso para agregar productos a esta solicitud.',
       );
     }
 
-    // 3. Creación
+
     const newProduct = new Product(
       data.name,
       data.amount,

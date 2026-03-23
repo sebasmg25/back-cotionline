@@ -6,7 +6,7 @@ export interface CreateQuotationRequestDto {
   description?: string;
   responseDeadline: Date;
   branch: string;
-  status?: QuotationRequestStatus; // Añadido para recibir DRAFT o PENDING
+  status?: QuotationRequestStatus;
 }
 
 export interface UpdateQuotationRequestDto {
@@ -14,7 +14,7 @@ export interface UpdateQuotationRequestDto {
   description?: string;
   responseDeadline?: Date;
   branch?: string;
-  status?: QuotationRequestStatus; // Añadido para poder publicar un borrador existente
+  status?: QuotationRequestStatus;
 }
 
 export interface QuotationRequestResponse {

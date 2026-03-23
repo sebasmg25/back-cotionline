@@ -20,19 +20,19 @@ export class DeleteBusinessController {
         data: deletedBusiness,
       });
     } catch (error: any) {
-      // 1. No existe (404)
+
       if (error.message === 'Negocio no encontrado.') {
         res.status(404).json({ message: error.message });
         return;
       }
 
-      // 2. Seguridad - No es el dueño (403)
+
       if (error.message === 'No tienes permiso para acceder a este negocio.') {
         res.status(403).json({ message: error.message });
         return;
       }
 
-      // 3. Error en la persistencia (500)
+
       if (
         error.message === 'No se pudo eliminar el negocio de la base de datos.'
       ) {

@@ -13,7 +13,7 @@ export const updateUserValidationRules = [
     .notEmpty()
     .withMessage('El apellido no puede estar vacío.'),
 
-  body('department') // Agregamos validación opcional para departamento
+  body('department') 
     .optional()
     .trim()
     .notEmpty()
@@ -36,7 +36,7 @@ export const updateUserValidationRules = [
     .matches(/[!@#$%^&*]/)
     .withMessage('Debe contener al menos un caracter especial.'),
 
-  // Actualizamos la validación personalizada para incluir 'department'
+  
   body().custom((value, { req }) => {
     const { name, lastName, department, city, password } = req.body;
     if (!name && !lastName && !department && !city && !password) {

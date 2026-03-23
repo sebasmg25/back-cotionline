@@ -15,7 +15,7 @@ export class User {
   public planId?: string;
   public planStartDate?: Date;
   public role: UserRole;
-  public ownerId?: string; // Solo para colaboradores
+  public ownerId?: string;
 
   constructor(
     identification: string,

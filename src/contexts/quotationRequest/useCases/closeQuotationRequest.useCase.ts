@@ -14,10 +14,10 @@ export class CloseQuotationRequestUseCase {
 
   async execute(
     id: string,
-    userIdSession: string, // El comprador logueado
+    userIdSession: string,
     selectedOfferId: string,
   ): Promise<void> {
-    // 1. Buscar y blindar la solicitud original
+
     const request = await this.quotationRequestRepository.findById(id);
 
     if (!request || request.userId !== userIdSession) {
@@ -26,7 +26,7 @@ export class CloseQuotationRequestUseCase {
       );
     }
 
-    // 2. Validaciones de Estado
+
     if (request.status === QuotationRequestStatus.EXPIRED) {
       throw new Error('No puedes cerrar una solicitud que ya ha expirado.');
     }
@@ -34,36 +34,34 @@ export class CloseQuotationRequestUseCase {
       throw new Error('Esta solicitud ya se encuentra cerrada.');
     }
 
-    // 3. Buscar y blindar la cotización elegida
+
     const selectedQuotation =
       await this.quotationRepository.findById(selectedOfferId);
     if (!selectedQuotation) {
       throw new Error('La cotización seleccionada no existe.');
     }
 
-    // 🛡️ Blindaje jerárquico: ¿La oferta es realmente de esta solicitud?
     if (selectedQuotation.quotationRequestId !== id) {
       throw new Error(
         'La cotización seleccionada no pertenece a esta solicitud.',
       );
     }
 
-    // 4. Actualizar estado de la solicitud
+
     await this.quotationRequestRepository.update(id, {
       status: QuotationRequestStatus.CLOSED,
     });
 
-    // 4.1 Actualizar estado de las cotizaciones recibidas
     const allQuotations = await this.quotationRepository.findByQuotationRequestId(id);
     for (const q of allQuotations) {
       if (q.id === selectedOfferId) {
-        await this.quotationRepository.update(q.id!, { status: QuotationStatus.ACCEPTED }); // as any en caso de que el enum lo requiera temporalmente, pero el modelo dice QuotationStatus
+        await this.quotationRepository.update(q.id!, { status: QuotationStatus.ACCEPTED });
       } else {
         await this.quotationRepository.update(q.id!, { status: QuotationStatus.EXPIRED }); // 'Rechazada' o expirada implicitamente
       }
     }
 
-    // 5. Notificar al ganador
+
     try {
       await this.sendNotificationUseCase.execute(
         NotificationType.TRANSACTIONAL,

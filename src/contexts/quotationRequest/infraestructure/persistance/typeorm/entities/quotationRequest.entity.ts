@@ -36,7 +36,7 @@ export class QuotationRequestEntity {
   })
   status!: QuotationRequestStatus;
 
-  @Column()
+  @Column({ name: 'branchId' })
   branch!: string;
 
   @Column()
@@ -48,7 +48,6 @@ export class QuotationRequestEntity {
   @JoinColumn({ name: 'userId' })
   user!: UserEntity;
 
-  // RELACIÓN: Una solicitud tiene muchos Productos
   @OneToMany(() => ProductEntity, (product) => product.quotationRequest)
   products!: ProductEntity[];
 

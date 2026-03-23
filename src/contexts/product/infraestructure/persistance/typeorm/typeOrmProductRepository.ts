@@ -14,9 +14,6 @@ export class TypeORMProductRepository implements ProductRepository {
     this.ormRepository = AppDataSource.getRepository(ProductEntity);
   }
 
-  /**
-   * MÉTODO MAPPER: Centraliza la creación del modelo de dominio.
-   */
   private mapToDomain(entity: ProductEntity): Product {
     return new Product(
       entity.name,

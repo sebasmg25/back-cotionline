@@ -17,19 +17,19 @@ export class DeleteBranchController {
         data: deletedBranch,
       });
     } catch (error: any) {
-      // 1. Error de Seguridad: No es el dueño (403)
+
       if (error.message.includes('No tienes permiso para eliminar esta sede.')) {
         res.status(403).json({ message: error.message });
         return;
       }
 
-      // 2. Error de Negocio: No encontrado (404)
+
       if (error.message.includes('Sede no encontrada.')) {
         res.status(404).json({ message: error.message });
         return;
       }
 
-      // 3. Error de Negocio: Solicitudes activas (400)
+
       if (
         error.message.includes('No se puede eliminar esta sede porque tiene solicitudes de cotización activas.')
       ) {
@@ -37,7 +37,7 @@ export class DeleteBranchController {
         return;
       }
 
-      // 4. Error técnico (500)
+
       console.error('[DeleteBranchController] Error inesperado:', error);
       res.status(500).json({
         message: 'Ocurrió un error interno al intentar eliminar la sede.',

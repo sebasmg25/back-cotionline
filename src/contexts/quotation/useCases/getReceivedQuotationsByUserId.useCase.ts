@@ -14,12 +14,11 @@ export class GetReceivedQuotationsByUserIdUseCase {
       await this.quotationRepository.findReceivedByUserId(effectiveOwnerId);
 
     return quotations.map((q) => {
-      // Usamos el requestTitle adjuntado en el repositorio o uno default
       const title = (q as any).requestTitle || 'Solicitud sin título';
       return {
         ...this.mapToResponse(q),
         requestTitle: title,
-        createdAt: (q as any).issueDate, // Usamos issueDate como createdAt
+        createdAt: (q as any).issueDate,
       };
     });
   }

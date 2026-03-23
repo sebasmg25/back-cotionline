@@ -18,10 +18,8 @@ export class GetPublicQuotationRequestsUseCase {
   ): Promise<QuotationRequestResponse[]> {
     const effectiveOwnerId = userSession.ownerId || userSession.id;
 
-    // Sincronización global de expiradas
     await this.quotationRequestRepository.updateExpiredStatus({});
 
-    // Buscamos las que están PENDING y NO pertenecen al dueño real (effectiveOwnerId)
     const publicRequests =
       await this.quotationRequestRepository.findActiveQuotationRequests(
         effectiveOwnerId,

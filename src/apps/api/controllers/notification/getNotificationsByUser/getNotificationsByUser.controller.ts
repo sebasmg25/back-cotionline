@@ -7,7 +7,6 @@ export class GetNotificationsByUserController {
 
   async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
-      // SEGURIDAD: Extraemos el ID del token, no de los parámetros
       const userSession = req.userSession!;
 
       const notifications =

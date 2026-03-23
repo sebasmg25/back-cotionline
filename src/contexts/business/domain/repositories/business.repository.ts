@@ -5,7 +5,7 @@ export interface BusinessUpdateFields {
   name?: string;
   description?: string;
   address?: string;
-  status?: BusinessStatus; // <-- Agregamos esto para permitir verificaciones
+  status?: BusinessStatus; 
   rutUrl?: string;
   chamberOfCommerceUrl?: string;
 }

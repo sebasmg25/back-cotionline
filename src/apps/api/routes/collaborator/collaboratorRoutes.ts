@@ -1,13 +1,11 @@
 import { Router, Request, Response } from 'express';
 
-// Infraestructura y Repositorios
 import { TypeORMCollaboratorRepository } from '../../../../contexts/collaborator/infraestructure/persistance/typeorm/typeOrmCollaboratorRepository';
 import { TypeORMNotificationRepository } from '../../../../contexts/notification/infraestructure/persistance/typeorm/typeOrmNotificationRepository';
 import { TypeORMUserRepository } from '../../../../contexts/user/infraestructure/persistance/typeorm/typeOrmUserRepository';
 import { TypeORMPlanRepository } from '../../../../contexts/subscription/infraestructure/persistance/typeorm/typeOrmPlanRepository';
 import { EmailService } from '../../../../contexts/shared/infraestructure/email/nodemailer.service';
 
-// Casos de Uso
 import { CreateCollaboratorUseCase } from '../../../../contexts/collaborator/useCases/createCollaborator.useCase';
 import { UpdateCollaboratorUseCase } from '../../../../contexts/collaborator/useCases/updateCollaborator.useCase';
 import { GetCollaboratorUseCase } from '../../../../contexts/collaborator/useCases/getCollaborator.useCase';
@@ -19,7 +17,6 @@ import { GetActiveCollaboratorsUseCase } from '../../../../contexts/collaborator
 import { DeleteActiveCollaboratorUseCase } from '../../../../contexts/collaborator/useCases/deleteActiveCollaborator.useCase';
 import { SendNotificationUseCase } from '../../../../contexts/notification/useCases/sendNotification.useCase';
 
-// Controladores
 import { CreateCollaboratorController } from '../../controllers/collaborator/createCollaborator/createCollaborator.controller';
 import { UpdateCollaboratorController } from '../../controllers/collaborator/updateCollaborator/updateCollaborator.controller';
 import { GetCollaboratorController } from '../../controllers/collaborator/getCollaborator/getCollaborator.controller';
@@ -30,7 +27,6 @@ import { RejectInvitationController } from '../../controllers/collaborator/rejec
 import { GetActiveCollaboratorsController } from '../../controllers/collaborator/getActiveCollaborators/getActiveCollaborators.controller';
 import { DeleteActiveCollaboratorController } from '../../controllers/collaborator/deleteActiveCollaborator/deleteActiveCollaborator.controller';
 
-// Middlewares y Validadores
 import { RequestValidator } from '../../middlewares/validateRequest';
 import { JwtVerifier, AuthRequest } from '../../middlewares/jwtVerifier';
 import { BusinessStatusValidator } from '../../middlewares/businessStatus';
@@ -39,14 +35,14 @@ import { updateCollaboratorValidationRules } from '../../controllers/collaborato
 
 const router = Router();
 
-// 1. Instanciar Infraestructura
+
 const collaboratorRepo = new TypeORMCollaboratorRepository();
 const notificationRepo = new TypeORMNotificationRepository();
 const userRepository = new TypeORMUserRepository();
 const planRepository = new TypeORMPlanRepository();
 const emailService = new EmailService();
 
-// 2. Instanciar Casos de Uso
+
 const sendNotificationUseCase = new SendNotificationUseCase(notificationRepo);
 const createUseCase = new CreateCollaboratorUseCase(
   collaboratorRepo,
@@ -72,7 +68,7 @@ const rejectUseCase = new RejectInvitationUseCase(
   sendNotificationUseCase,
 );
 
-// 3. Instanciar Controladores
+
 const createController = new CreateCollaboratorController(createUseCase);
 const updateController = new UpdateCollaboratorController(updateUseCase);
 const getController = new GetCollaboratorController(getUseCase);
@@ -85,13 +81,6 @@ const deleteActiveController = new DeleteActiveCollaboratorController(deleteActi
 const acceptController = new AcceptInvitationController(acceptUseCase);
 const rejectController = new RejectInvitationController(rejectUseCase);
 
-// --- 4. Definición de Rutas ---
-
-/**
- * RUTAS PARA EL DUEÑO
- */
-
-// Listar colaboradores (invitaciones): CORRECCIÓN -> Se agrega BusinessStatusValidator
 router.get(
   '/',
   JwtVerifier.handler,
@@ -100,7 +89,6 @@ router.get(
     getByOwnerController.handle(req as AuthRequest, res),
 );
 
-// Listar colaboradores activos con cuenta
 router.get(
   '/active',
   JwtVerifier.handler,
@@ -109,7 +97,6 @@ router.get(
     getActiveController.handle(req as AuthRequest, res),
 );
 
-// Ver colaborador específico: CORRECCIÓN -> Se agrega BusinessStatusValidator
 router.get(
   '/:id',
   JwtVerifier.handler,
@@ -118,7 +105,6 @@ router.get(
     getController.handle(req as AuthRequest, res),
 );
 
-// Invitar nuevo colaborador
 router.post(
   '/register',
   JwtVerifier.handler,
@@ -129,7 +115,6 @@ router.post(
     createController.handle(req as AuthRequest, res),
 );
 
-// Editar colaborador
 router.patch(
   '/:id',
   JwtVerifier.handler,
@@ -140,7 +125,6 @@ router.patch(
     updateController.handle(req as AuthRequest, res),
 );
 
-// Eliminar invitación
 router.delete(
   '/:id',
   JwtVerifier.handler,
@@ -149,7 +133,6 @@ router.delete(
     deleteController.handle(req as AuthRequest, res),
 );
 
-// Eliminar colaborador activo
 router.delete(
   '/active/:id',
   JwtVerifier.handler,
@@ -158,11 +141,6 @@ router.delete(
     deleteActiveController.handle(req as AuthRequest, res),
 );
 
-/**
- * RUTAS PÚBLICAS (Flujo del Invitado)
- * Nota: Estas se mantienen sin BusinessStatusValidator porque el invitado
- * no es el dueño del negocio y no tiene una sesión JWT de dueño.
- */
 router.patch('/:id/accept', (req: Request, res: Response) =>
   acceptController.handle(req, res),
 );

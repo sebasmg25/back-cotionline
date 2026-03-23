@@ -14,7 +14,7 @@ export class GetBranchesByBusinessIdUseCase {
   ): Promise<BranchResponse[]> {
     const effectiveOwnerId = userSession.ownerId || userSession.id;
 
-    // 1. Validar propiedad PRIMERO
+
     const business = await this.businessRepository.findById(businessId);
 
     if (!business) {
@@ -25,11 +25,11 @@ export class GetBranchesByBusinessIdUseCase {
       throw new Error('No tienes permiso para ver las sedes de este negocio.');
     }
 
-    // 2. Buscamos las sedes (esto devuelve un Branch[])
+
     const branches =
       await this.branchRepository.findBranchesByBusinessId(businessId);
 
-    // 3. Transformar la lista de modelos a una lista de DTOs
+
     return branches.map((branch) => ({
       id: branch.id!,
       name: branch.name,

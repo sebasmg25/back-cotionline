@@ -9,7 +9,7 @@ export class UpdateBranchController {
   async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const userId = req.userSession!.id; // Extraído del token
+      const userId = req.userSession!.id; 
       const branchData: UpdateBranchRequest = req.body;
 
       const updateBranch = await this.updateBranchUseCase.execute(
@@ -23,19 +23,19 @@ export class UpdateBranchController {
         data: updateBranch,
       });
     } catch (error: any) {
-      // 1. Error de Autorización (403 Forbidden)
+
       if (error.message === 'No tienes permiso para modificar esta sede.') {
         res.status(403).json({ message: error.message });
         return;
       }
 
-      // 2. No existe (404 Not Found)
+
       if (error.message === 'La sede que intentas actualizar no existe') {
         res.status(404).json({ message: error.message });
         return;
       }
 
-      // 3. Sin cambios (400 Bad Request)
+
       if (
         error.message === 'No se detectaron cambios en los campos enviados.'
       ) {
@@ -43,7 +43,7 @@ export class UpdateBranchController {
         return;
       }
 
-      // Dentro del bloque catch del handle:
+      
       if (
         error.message ===
         'La ciudad proporcionada no es válida en nuestro registro oficial.'
@@ -52,7 +52,7 @@ export class UpdateBranchController {
         return;
       }
 
-      // 4. Error técnico o de persistencia
+
       if (error.message === 'Error al actualizar') {
         res.status(500).json({ message: error.message });
         return;

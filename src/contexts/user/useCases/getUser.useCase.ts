@@ -11,7 +11,6 @@ export class GetUserUseCase {
       throw new Error('Usuario no encontrado.');
     }
 
-    // Retornamos el contrato de interfaz limpia (sin password)
     return UserResponseDto.toDto(user);
   }
 }

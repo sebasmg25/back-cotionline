@@ -37,11 +37,9 @@ export class LoginUserUseCase {
       );
     }
 
-    // Identificar si es un colaborador
     let role = user.role || UserRole.OWNER;
     let ownerId = user.ownerId || undefined;
 
-    // Si el usuario no tiene rol de colaborador explícito, verifiquemos si tiene una invitación aceptada
     if (role !== UserRole.COLLABORATOR) {
       const collaboratorInfo = await this.collaboratorRepository.findByEmail(email);
       if (collaboratorInfo && collaboratorInfo.invitationStatus === InvitationStatus.ACCEPTED) {
@@ -50,7 +48,6 @@ export class LoginUserUseCase {
       }
     }
 
-    // Generación de sesión con los datos necesarios para el JWT
     const token = this.tokenGenerator.generateToken({
       id: user.id!,
       identification: user.identification,

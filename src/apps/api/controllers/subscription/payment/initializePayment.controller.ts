@@ -7,11 +7,11 @@ export class InitializePaymentController {
 
   async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
-      // 1. BLINDAJE: El userId NO viene del body, viene del Token de sesión.
+
       const userIdSession = req.userSession!.id;
       const { planId } = req.body;
 
-      // 2. Validación mínima de entrada
+
       if (!planId) {
         res.status(400).json({
           message: 'El ID del plan es requerido para inicializar el pago.',
@@ -31,7 +31,7 @@ export class InitializePaymentController {
     } catch (error: any) {
       const errorMessage = error.message.toLowerCase();
 
-      // 3. Mapeo de errores de negocio del Caso de Uso
+
       if (errorMessage.includes('no existe')) {
         res.status(404).json({ message: error.message });
         return;

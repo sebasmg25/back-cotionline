@@ -5,10 +5,10 @@ import { AuthRequest } from '../../../middlewares/jwtVerifier';
 export class DeleteUserController {
   constructor(private deleteUserUseCase: DeleteUserUseCase) {}
 
-  // 1. Usamos AuthRequest para acceder a la sesión blindada
+
   async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
-      // 2. BLINDAJE: El ID no viene de la URL (params), viene del Token
+
       const userIdSession = req.userSession?.id;
 
       if (!userIdSession) {
@@ -25,7 +25,7 @@ export class DeleteUserController {
     } catch (error: any) {
       const errorMessage = error.message;
 
-      // 3. Manejo de errores con includes (Consistente con el Caso de Uso)
+
       if (
         errorMessage.includes('no encontrado') ||
         errorMessage.includes('permiso')

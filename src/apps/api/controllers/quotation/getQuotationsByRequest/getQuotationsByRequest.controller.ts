@@ -25,14 +25,12 @@ export class GetQuotationsByRequestController {
     } catch (error: any) {
       const message = error.message;
 
-      // 1. Error de Seguridad - Forbidden (403)
-      // Si el usuario intenta ver ofertas de una solicitud que no creó
       if (message.includes('No tienes permiso')) {
         res.status(403).json({ message });
         return;
       }
 
-      // 2. Error de Recurso - Not Found (404)
+
       if (
         message.toLowerCase().includes('no encontrada') ||
         message.toLowerCase().includes('no existe')
@@ -41,7 +39,7 @@ export class GetQuotationsByRequestController {
         return;
       }
 
-      // 3. Error técnico inesperado
+
       console.error('[GetQuotationsByRequestController] Error:', error);
       res.status(500).json({
         message: 'Error interno del servidor al obtener las cotizaciones.',

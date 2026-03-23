@@ -15,7 +15,6 @@ export class GetCollaboratorUseCase {
       throw new Error('Colaborador no encontrado.');
     }
 
-    // SEGURIDAD: Solo el dueño que lo invitó puede ver sus detalles
     if (collaborator.userId !== userIdSession) {
       throw new Error('No tienes permiso para ver este colaborador.');
     }

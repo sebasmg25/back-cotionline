@@ -1,7 +1,7 @@
 export enum NotificationType {
-  TRANSACTIONAL = 'TRANSACTIONAL', // Solicitudes y Cotizaciones recibidas
-  SYSTEM = 'SYSTEM', // Planes y Wompi
-  TEAM = 'TEAM', // Colaboradores
+  TRANSACTIONAL = 'TRANSACTIONAL',
+  SYSTEM = 'SYSTEM',
+  TEAM = 'TEAM',
 }
 
 export class Notification {

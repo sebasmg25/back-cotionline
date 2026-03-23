@@ -1,11 +1,11 @@
 import { Product } from '../../../product/domain/models/product.model';
 
 export enum QuotationRequestStatus {
-  DRAFT = 'DRAFT', // Nuevo: El usuario está editando, nadie más la ve.
-  PENDING = 'PENDING', // Nadie ha cotizado.
-  QUOTED = 'QUOTED', // Hay ofertas, pero el tiempo sigue corriendo.
-  EXPIRED = 'EXPIRED', // Se acabó el tiempo y NO se cerró el trato.
-  CLOSED = 'CLOSED', // Éxito: Se eligió a un proveedor.
+  DRAFT = 'DRAFT',
+  PENDING = 'PENDING',
+  QUOTED = 'QUOTED',
+  EXPIRED = 'EXPIRED',
+  CLOSED = 'CLOSED',
 }
 export class QuotationRequest {
   public id?: string;

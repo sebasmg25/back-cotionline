@@ -27,7 +27,6 @@ export class RejectInvitationUseCase {
     if (!updated)
       throw new Error('No se pudo actualizar el estado de la invitación');
 
-    // Notificamos al dueño (el userId guardado en el colaborador)
     await this.sendNotificationUseCase.execute(
       NotificationType.TEAM,
       'Invitación Rechazada',

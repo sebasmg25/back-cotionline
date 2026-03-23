@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { UserEntity } from '../../../../../user/infraestructure/persistance/typeorm/entities/user.entity';
 
-@Entity('plans') // La tabla se llama 'plans'
+@Entity('plans')
 export class PlanEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

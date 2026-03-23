@@ -11,9 +11,6 @@ export class TypeORMPlanRepository implements PlanRepository {
     this.ormRepository = AppDataSource.getRepository(PlanEntity);
   }
 
-  /**
-   * MÉTODO MAPPER: Centraliza la instanciación de los Planes.
-   */
   private mapToDomain(entity: PlanEntity): Plan {
     return new Plan(
       entity.id,
@@ -36,7 +33,6 @@ export class TypeORMPlanRepository implements PlanRepository {
   }
 
   async findByName(name: string): Promise<Plan | null> {
-    // Usamos el casting aquí para que TypeORM entienda el filtro sobre el nombre
     const entity = await this.ormRepository.findOne({
       where: { name: name as any },
     });

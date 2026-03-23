@@ -13,19 +13,16 @@ export const createQuotationValidationRules = [
 
   body('price')
     .custom((value, { req }) => {
-      // Si se está guardando como borrador, el precio puede ser cero o estar omitido temporalmente
       if (req.body.status === 'DRAFT') {
         if (value !== undefined && typeof value !== 'number') {
            throw new Error('El precio debe ser un número.');
         }
-        // Permitimos 0 o superior para borradores
         if (value !== undefined && value < 0) {
            throw new Error('El precio no puede ser negativo.');
         }
         return true;
       }
 
-      // Para publicar o cualquier otro estado, es estricto
       if (value === undefined || value === null || value === '') {
         throw new Error('El precio es requerido');
       }

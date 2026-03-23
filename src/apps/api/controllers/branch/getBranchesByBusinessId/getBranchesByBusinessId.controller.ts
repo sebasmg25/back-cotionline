@@ -22,7 +22,7 @@ export class GetBranchesByBusinessIdController {
         data: branches,
       });
     } catch (error: any) {
-      // 1. Error de Autorización (403)
+
       if (
         error.message ===
         'No tienes permiso para ver las sedes de este negocio.'
@@ -31,13 +31,13 @@ export class GetBranchesByBusinessIdController {
         return;
       }
 
-      // 2. Error de Negocio: No encontrado (404)
+
       if (error.message === 'El negocio especificado no existe.') {
         res.status(404).json({ message: error.message });
         return;
       }
 
-      // 3. Error técnico
+
       console.error('[GetBranchesController] Error inesperado:', error);
       res
         .status(500)

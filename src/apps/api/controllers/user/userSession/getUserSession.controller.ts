@@ -11,7 +11,7 @@ export class GetUserSessionController {
 
   async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
-      // 1. BLINDAJE: Extraemos el ID del objeto session inyectado por el middleware
+
       const userIdSession = req.userSession?.id;
 
       if (!userIdSession) {
@@ -21,8 +21,8 @@ export class GetUserSessionController {
         return;
       }
 
-      // 2. RESILIENCIA: Verificación del plan (Background check)
-      // Lo envolvemos para que un fallo en suscripciones no impida el login/sesión
+
+      
       try {
         await this.checkPlanExpirationUseCase.execute(userIdSession);
       } catch (planError: any) {
@@ -32,12 +32,8 @@ export class GetUserSessionController {
         );
       }
 
-      // 3. RECUPERACIÓN DE DATOS: Invocamos el caso de uso
-      // Importante: user ya viene como 'UserResponse' (DTO de salida limpio)
       const user = await this.getUserUseCase.execute(userIdSession);
-
-      // CORRECCIÓN DEL ERROR:
-      // Ya no necesitamos quitar el password manualmente, el DTO ya lo hizo por nosotros.
+      
       res.status(200).json({
         message: 'Sesión recuperada con éxito.',
         data: { user },

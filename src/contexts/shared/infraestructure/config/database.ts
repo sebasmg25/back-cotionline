@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { EnvConfig } from '../env/envConfig'; // Importar para obtener variables de entorno
+import { EnvConfig } from '../env/envConfig';
 import { UserEntity } from '../../../user/infraestructure/persistance/typeorm/entities/user.entity';
 import { BusinessEntity } from '../../../business/infraestructure/persistance/typeorm/entities/business.entity';
 import { QuotationRequestEntity } from '../../../quotationRequest/infraestructure/persistance/typeorm/entities/quotationRequest.entity';
@@ -10,11 +10,9 @@ import { CollaboratorEntity } from '../../../collaborator/infraestructure/persis
 import { NotificationEntity } from '../../../notification/infraestructure/persistance/typeorm/entities/notification.entity';
 import { PlanEntity } from '../../../subscription/infraestructure/persistance/typeorm/entities/plan.entity';
 import { PaymentTransactionEntity } from '../../../subscription/infraestructure/persistance/typeorm/entities/paymentTransaction.entity';
-// Importa tus entidades de TypeORM aquí
-// import { UserEntity } from '../infrastructure/database/entities/UserEntity';
 
 export const AppDataSource = new DataSource({
-  type: 'mysql', // Cambia a 'mysql', 'sqlite', etc., según tu base de datos
+  type: 'mysql',
   host: EnvConfig.get('DB_HOST'),
   port: Number.parseInt(EnvConfig.get('DB_PORT') || '5432', 10),
   username: EnvConfig.get('DB_USER'),
@@ -34,8 +32,7 @@ export const AppDataSource = new DataSource({
     NotificationEntity,
     PlanEntity,
     PaymentTransactionEntity,
-    // UserEntity // Añade tus entidades aquí
   ],
-  migrations: [], // Aquí irán tus archivos de migración
+  migrations: [],
   subscribers: [],
 });

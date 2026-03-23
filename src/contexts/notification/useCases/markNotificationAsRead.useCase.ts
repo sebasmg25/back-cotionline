@@ -11,7 +11,6 @@ export class MarkNotificationAsReadUseCase {
       throw new Error('La notificación no existe');
     }
 
-    // SEGURIDAD: Validar propiedad
     if (notification.userId !== userIdSession) {
       throw new Error('No tienes permiso para modificar esta notificación');
     }

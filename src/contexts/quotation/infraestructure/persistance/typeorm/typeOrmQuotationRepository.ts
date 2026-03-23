@@ -64,7 +64,6 @@ export class TypeORMQuotationRepository implements QuotationRepository {
       },
       relations: ['user', 'user.businesses'],
     });
-    // Uso del mapper en la colección
     return entities.map((entity) => this.mapToDomain(entity));
   }
 
@@ -94,7 +93,7 @@ export class TypeORMQuotationRepository implements QuotationRepository {
   async findAllByUserId(userId: string): Promise<Quotation[]> {
     const entities = await this.ormRepository.find({
       where: { userId },
-      order: { issueDate: 'DESC' }, // Show newest first
+      order: { issueDate: 'DESC' },
     });
     return entities.map((entity) => this.mapToDomain(entity));
   }
@@ -104,7 +103,7 @@ export class TypeORMQuotationRepository implements QuotationRepository {
       relations: ['quotationRequest', 'user', 'user.businesses'],
       where: {
         quotationRequest: {
-          userId: userId, // Las solicitudes deben pertenecer al usuario actual
+          userId: userId,
         },
         status: Not(QuotationStatus.DRAFT),
       },
@@ -112,7 +111,6 @@ export class TypeORMQuotationRepository implements QuotationRepository {
     });
     return entities.map((entity) => {
       const q = this.mapToDomain(entity);
-      // Para el dashboard, adjuntamos el requestTitle
       (q as any).requestTitle = entity.quotationRequest?.title;
       return q;
     });

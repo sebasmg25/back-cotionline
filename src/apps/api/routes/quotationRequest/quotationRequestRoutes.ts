@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express';
 
-// Infraestructura
 import { TypeORMQuotationRequestRepository } from '../../../../contexts/quotationRequest/infraestructure/persistance/typeorm/typeOrmQuotationRequestRepository';
 import { TypeORMUserRepository } from '../../../../contexts/user/infraestructure/persistance/typeorm/typeOrmUserRepository';
 import { TypeORMPlanRepository } from '../../../../contexts/subscription/infraestructure/persistance/typeorm/typeOrmPlanRepository';
@@ -9,7 +8,6 @@ import { TypeORMNotificationRepository } from '../../../../contexts/notification
 import { TypeORMBranchRepository } from '../../../../contexts/branch/infrastructure/persistance/typeorm/typeOrmBranchRepository';
 import { TypeORMBusinessRepository } from '../../../../contexts/business/infraestructure/persistance/typeorm/typeOrmBusinessRepository';
 
-// Casos de Uso
 import { RegisterQuotationRequestUseCase } from '../../../../contexts/quotationRequest/useCases/registerQuotationRequest.useCase';
 import { UpdateQuotationRequestUseCase } from '../../../../contexts/quotationRequest/useCases/updateQuotationRequest.useCase';
 import { DeleteQuotationRequestUseCase } from '../../../../contexts/quotationRequest/useCases/deleteQuotationRequest.useCase';
@@ -20,7 +18,6 @@ import { CloseQuotationRequestUseCase } from '../../../../contexts/quotationRequ
 import { SendNotificationUseCase } from '../../../../contexts/notification/useCases/sendNotification.useCase';
 import { GetPublicQuotationRequestsUseCase } from '../../../../contexts/quotationRequest/useCases/getPublicQuotationRequests.useCase';
 
-// Controladores
 import { CreateQuotationRequestController } from '../../controllers/quotationRequest/createQuotationRequest/createQuotationRequest.controller';
 import { UpdateQuotationRequestController } from '../../controllers/quotationRequest/updateQuotationRequest/updateQuotationRequest.controller';
 import { DeleteQuotationRequestController } from '../../controllers/quotationRequest/deleteQuotationRequest/deleteQuotationRequest.controller';
@@ -30,7 +27,6 @@ import { SearchQuotationRequestsByTitleController } from '../../controllers/quot
 import { CloseQuotationRequestController } from '../../controllers/quotationRequest/closeQuotationRequest/closeQuotationRequest.controller';
 import { GetPublicQuotationRequestsController } from '../../controllers/quotationRequest/getPublicQuotationRequests/getPublicQuotationRequests.controller';
 
-// Middlewares
 import { RequestValidator } from '../../middlewares/validateRequest';
 import { JwtVerifier, AuthRequest } from '../../middlewares/jwtVerifier';
 import { BusinessStatusValidator } from '../../middlewares/businessStatus';
@@ -40,7 +36,7 @@ import { closeQuotationRequestValidationRules } from '../../controllers/quotatio
 
 const router = Router();
 
-// 1. Instancias
+
 const quotationRequestRepo = new TypeORMQuotationRequestRepository();
 const userRepo = new TypeORMUserRepository();
 const planRepo = new TypeORMPlanRepository();
@@ -97,56 +93,35 @@ const getPublicCtrl = new GetPublicQuotationRequestsController(
   getPublicUseCase,
 );
 
-// --- RUTAS DE CONSULTA (Bloqueadas si el negocio no está verificado) ---
-
-/**
- * Cartelera pública para proveedores
- * CORRECCIÓN: Se agrega BusinessStatusValidator
- */
 router.get(
   '/public',
   JwtVerifier.handler,
-  BusinessStatusValidator.handler, // <--- Agregado
+  BusinessStatusValidator.handler,
   (req: Request, res: Response) =>
     getPublicCtrl.handle(req as AuthRequest, res),
 );
 
-/**
- * Buscador privado del comprador
- * CORRECCIÓN: Se agrega BusinessStatusValidator
- */
 router.get(
   '/search',
   JwtVerifier.handler,
-  BusinessStatusValidator.handler, // <--- Agregado
+  BusinessStatusValidator.handler,
   (req: Request, res: Response) => searchCtrl.handle(req as AuthRequest, res),
 );
 
-/**
- * Historial privado del comprador
- * CORRECCIÓN: Se agrega BusinessStatusValidator
- */
 router.get(
   '/my-history',
   JwtVerifier.handler,
-  BusinessStatusValidator.handler, // <--- Agregado
+  BusinessStatusValidator.handler, 
   (req: Request, res: Response) =>
     getAllByUserIdCtrl.handle(req as AuthRequest, res),
 );
 
-/**
- * Detalle individual
- * CORRECCIÓN: Se agrega BusinessStatusValidator
- */
 router.get(
   '/:id',
   JwtVerifier.handler,
-  BusinessStatusValidator.handler, // <--- Agregado
+  BusinessStatusValidator.handler,
   (req: Request, res: Response) => getCtrl.handle(req as AuthRequest, res),
 );
-
-/** * RUTAS DE ACCIÓN (Ya tenían el validador, se mantiene)
- */
 
 router.post(
   '/register',

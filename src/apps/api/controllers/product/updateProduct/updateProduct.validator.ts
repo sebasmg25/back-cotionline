@@ -5,7 +5,6 @@ export const updateProductValidationRules = [
     .isUUID()
     .withMessage('El ID del producto debe ser un UUID válido.'),
 
-  // Usamos custom para validar que el body no esté vacío
   body().custom((value, { req }) => {
     const { name, amount, unitOfMeasurement, description } = req.body;
     if (!name && !amount && !unitOfMeasurement && !description) {

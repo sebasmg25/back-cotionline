@@ -26,9 +26,6 @@ export class TypeORMQuotationRequestRepository implements QuotationRequestReposi
     this.ormRepository = AppDataSource.getRepository(QuotationRequestEntity);
   }
 
-  /**
-   * MÉTODO MAPPER: Centraliza la conversión de la entidad de DB al modelo de Dominio.
-   */
   private mapToDomain(entity: QuotationRequestEntity): QuotationRequest {
     const products = entity.products?.map(
       (p) =>
@@ -110,7 +107,6 @@ export class TypeORMQuotationRequestRepository implements QuotationRequestReposi
       userId: Not(userIdToExclude),
     };
 
-    // Filtros de usuario (ubicación)
     const userFilters: any = {};
     if (filters?.department) {
       userFilters.department = ILike(`%${filters.department}%`);

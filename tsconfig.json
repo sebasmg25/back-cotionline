@@ -1,27 +1,26 @@
 {
   "compilerOptions": {
-    /* Lenguaje y entorno */
-    "target": "es2021" /* Establece la versión de ECMAScript objetivo. */,
-    "module": "commonjs" /* Especifica el sistema de módulos generado. */,
+    "target": "es2021",
+    "module": "commonjs",
     "lib": [
       "es2021",
       "dom"
-    ] /* Incluye librerías de tipos. "dom" es útil si usas algo que espera tipos de navegador, aunque para backend no es estrictamente necesario, no hace daño. */,
-    "outDir": "./dist" /* Directorio de salida para los archivos compilados. */,
-    "rootDir": "./src" /* Especifica la raíz de tus archivos fuente. */,
-    "esModuleInterop": true /* Habilita la interoperabilidad con módulos CommonJS. */,
-    "emitDecoratorMetadata": true /* Habilita la emisión de metadatos de decoradores. Necesario para TypeORM. */,
-    "experimentalDecorators": true /* Habilita el soporte para decoradores experimentales. Necesario para TypeORM. */,
-    "strict": true /* Habilita todas las opciones estrictas de comprobación de tipos. */,
-    "skipLibCheck": true /* Omite la comprobación de tipos de todos los archivos de declaración (.d.ts) */,
-    "forceConsistentCasingInFileNames": true /* No permitir referencias a un mismo archivo con mayúsculas/minúsculas inconsistentes. */,
-    "moduleResolution": "node" /* Estrategia de resolución de módulos. */
+    ],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node"
   },
   "include": [
-    "src/**/*" /* Incluye todos los archivos dentro de la carpeta 'src'. */
+    "src/**/*"
   ],
   "exclude": [
-    "node_modules" /* Excluye la carpeta node_modules. */,
-    "**/*.spec.ts" /* Excluye archivos de prueba. */
+    "node_modules",
+    "**/*.spec.ts"
   ]
 }

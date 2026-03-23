@@ -16,12 +16,10 @@ export class GetQuotationUseCase {
     const quotation = await this.quotationRepository.findById(quotationId);
     if (!quotation) throw new Error('Cotización no encontrada.');
 
-    // Buscamos la solicitud padre para saber quién es el comprador
     const request = await this.quotationRequestRepository.findById(
       quotation.quotationRequestId,
     );
 
-    // Blindaje de doble vía
     const isProvider = quotation.userId === effectiveOwnerId;
     const isBuyer = request?.userId === effectiveOwnerId;
 

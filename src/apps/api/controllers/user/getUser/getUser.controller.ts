@@ -7,7 +7,7 @@ export class GetUserController {
 
   async handle(req: AuthRequest, res: Response): Promise<void> {
     try {
-      // 1. BLINDAJE: Extraemos el ID de la sesión, no de los parámetros de la URL
+
       const userIdSession = req.userSession?.id;
 
       if (!userIdSession) {
@@ -15,12 +15,12 @@ export class GetUserController {
         return;
       }
 
-      // 2. El caso de uso ya devuelve el DTO (UserResponse) sin contraseña
+
       const user = await this.getUserUseCase.execute(userIdSession);
 
       res.status(200).json({
         message: 'Perfil obtenido exitosamente.',
-        data: user, // Ya viene limpio desde el UseCase
+        data: user, 
       });
     } catch (error: any) {
       const errorMessage = error.message;

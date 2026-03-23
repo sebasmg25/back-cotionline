@@ -28,7 +28,6 @@ export class LocalFileStorageService implements FileStorageService {
   getUrl(fileName: string): string {
     const port = EnvConfig.get('PORT') || 3000;
     const host = EnvConfig.get('HOST') || 'localhost';
-    // Normalizamos las barras invertidas a barras normales para URLs
-    return `http://${host}:${port}/uploads/${fileName}`.replaceAll(/\\/g, '/');
+    return `https://${host}:${port}/uploads/${fileName}`.replaceAll('\\', '/');
   }
 }
