@@ -47,7 +47,11 @@ Este documento detalla los pasos necesarios para configurar las variables de ent
    ![acceso](assets/images/Copiado-datos-acceso.png)
    
 4. **Copiar Datos:** Copia el `user` y `pass` proporcionados en las variables `SMTP_USER` y `SMTP_PASS` de tu archivo `.env`.
-5. **Ejecutar Terminal:** Abrir una segunda terminal en el editor y ejecutar el comando `ngrok http 3000`, esto se hace con el fin de que el servicio de correo este apuntando a la ubicación del puerto de la API; de no hacerse, el servicio de correo no funcionará
+5. **Ejecutar Terminal:** Abrir una segunda terminal en el editor y ejecutar el comando `ngrok http 3000`, esto se hace con el fin de que el servicio de correo este apuntando a la ubicación del puerto de la API; de no hacerse, el servicio de correo no funcionará.
+
+   ![imagen1](assets/images/st-1.jpeg)
+
+   ![imagen2](assets/images/st-2.jpeg)
 
 ## 4. 🔐 Seguridad (JWT)
 1. Inventa dos cadenas de texto largas y aleatorias (puedes usar un generador de contraseñas).
